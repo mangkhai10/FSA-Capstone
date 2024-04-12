@@ -121,14 +121,6 @@ const createOrderDetail = async ({ user_id, total_amount, status }) => {
   return response.rows[0];
 };
 
-const fetchAdminUsers = async () => {
-  const SQL = `
-    SELECT * FROM adminuser
-  `;
-  const response = await client.query(SQL);
-  return response.rows;
-};
-
 const fetchUsers = async () => {
   const SQL = `
     SELECT * FROM users
@@ -225,6 +217,7 @@ const authenticate = async ({ email, password }) => {
 
 module.exports = {
   client,
+  createAdminUser,
   createTables,
   createAdminUser,
   createUser,
@@ -232,7 +225,6 @@ module.exports = {
   createCartItem,
   createOrderItem,
   createOrderDetail,
-  fetchAdminUsers,
   fetchUsers,
   fetchProducts,
   fetchCartItems,
