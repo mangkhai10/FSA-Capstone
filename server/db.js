@@ -48,7 +48,7 @@ const createTables = async () => {
     -- Create cart_items table
     CREATE TABLE cart_items (
       cart_item_id SERIAL PRIMARY KEY,
-      user_id UUID REFERENCES users(user_id),
+      user_id UUID REFERENCES users(id),
       product_id INT REFERENCES products(product_id),
       quantity INT NOT NULL
     );
@@ -56,7 +56,7 @@ const createTables = async () => {
     -- Create order_items table
     CREATE TABLE order_items (
       order_item_id SERIAL PRIMARY KEY,
-      user_id UUID REFERENCES users(user_id),
+      user_id UUID REFERENCES users(id),
       product_id INT REFERENCES products(product_id),
       quantity INT NOT NULL
     );
@@ -64,7 +64,7 @@ const createTables = async () => {
     -- Create order_details table
     CREATE TABLE order_details (
       order_detail_id SERIAL PRIMARY KEY,
-      user_id UUID REFERENCES users(user_id),
+      user_id UUID REFERENCES users(id),
       total_amount DECIMAL(10, 2) NOT NULL,
       status VARCHAR(20) DEFAULT 'pending'
     );
