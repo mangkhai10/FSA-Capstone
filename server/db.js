@@ -42,7 +42,8 @@ const createTables = async () => {
       description TEXT,
       price DECIMAL(10, 2) NOT NULL,
       stock_quantity INT NOT NULL,
-      category VARCHAR(255) NOT NULL
+      category VARCHAR(255) NOT NULL,
+      image_url VARCHAR(255) NOT NULL
     );
 
     -- Create cart_items table
@@ -89,11 +90,11 @@ const createUser = async ({ username, email, password, address, payment_method }
   return response.rows[0];
 };
 
-const createProduct = async ({ name, description, price, stock_quantity, category }) => {
+const createProduct = async ({ name, description, price, stock_quantity, category, image_url }) => {
   const SQL = `
-    INSERT INTO products (name, description, price, stock_quantity, category) VALUES ($1, $2, $3, $4, $5) RETURNING *
+    INSERT INTO products (name, description, price, stock_quantity, category, image_url) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *
   `;
-  const response = await client.query(SQL, [name, description, price, stock_quantity, category]);
+  const response = await client.query(SQL, [name, description, price, stock_quantity, category, image_url]);
   return response.rows[0];
 };
 
