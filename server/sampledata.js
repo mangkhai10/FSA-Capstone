@@ -36,7 +36,7 @@ const SampleData = async () => {
           price: 49.99,
           stock_quantity: 100,
           category: "Shounen",
-          image: "https://resize.cdn.otakumode.com/ex/700.700/shop/product/32ed71c8a91e4929b62d4bafd3bd0ba7.jpg.webp"
+          image: "https://resize.cdn.otakumode.com/ex/700.700/shop/product/32ed71c8a91e4929b62d4bafd3bd0ba7.jpg.webp",
         }),
         createProduct({
           name: "Mikasa Ackerman Statue",

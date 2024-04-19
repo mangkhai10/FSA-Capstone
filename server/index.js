@@ -214,7 +214,7 @@ const isLoggedIn = async (req, res, next) => {
     }
   });
   
-  app.post('api/cartitems', async (req, res, next) => {
+  app.post('/api/cartitems', async (req, res, next) => {
     try {
       res.status(201).send(await createCartItem(req.body));
     } catch (ex) {
