@@ -100,7 +100,7 @@ const Products = () => {
         {filteredProducts.map(product => (
           <li key={product.product_id}>
             {/* Display the product image */}
-            <img src={product.image} alt={product.name} style={{ maxWidth: '100px', maxHeight: '100px' }} />
+            <img src={product.image_url} alt={product.name} style={{ maxWidth: '100px', maxHeight: '100px' }} />
 
             {/* Display other product details */}
             <div>Name: {product.name}</div>
