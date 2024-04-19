@@ -14,18 +14,26 @@ const {
     fetchOrderItems,
     deleteProduct,
     deleteCartItem,
-    findUserWithToken,
+    findUserByToken,
     authenticate
   } = require('./db');
   const express = require('express');
   const app = express();
   app.use(express.json());
   const { SampleData } = require("./sampledata");
+  // Serve static files for deployment
+const cors = require('cors');
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://fsa-capstone.onrender.com/api', 'http://localhost:5173'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+  withCredentials: true,
+}));
   
  // Middleware to check if the user is logged in
 const isLoggedIn = async (req, res, next) => {
     try {
-      req.user = await findUserWithToken(req.headers.authorization);
+      req.user = await findUserByToken(req.headers.authorization);
       next();
     } catch (ex) {
       next(ex);
@@ -33,7 +41,7 @@ const isLoggedIn = async (req, res, next) => {
   };
   const isAdmin = async (req, res, next) => {
     try {
-      req.user = await findUserWithToken(req.headers.authorization);
+      req.user = await findUserByToken(req.headers.authorization);
       if (req.user.role === 'admin') {
         next();
       } else {
@@ -206,6 +214,39 @@ const isLoggedIn = async (req, res, next) => {
     }
   });
   
+  app.post('api/cartitems', async (req, res, next) => {
+    try {
+      res.status(201).send(await createCartItem(req.body));
+    } catch (ex) {
+      next(ex);
+    }
+  });
+
+  app.get('/api/cartitems', async (req, res, next) => {
+    try {
+      res.send(await fetchCartItems());
+    } catch (ex) {
+      next(ex);
+    }
+  });
+  app.delete('/api/cartitems/:productId', async (req, res, next) => {
+    try {
+      await deleteCartItem(req.params.productId);
+      res.sendStatus(204);
+    } catch (ex) {
+      next(ex);
+    }
+  });
+  
+  app.put('/api/cartitems/:productId', async (req, res,next) => {
+    try {
+      res.send(await fetchCartItems(req.body));
+    } catch (ex) {
+      next(ex);
+    }
+  });
+  
+
   // Order Item endpoints
   app.post('/api/orderitems', async (req, res, next) => {
     try {

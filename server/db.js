@@ -27,7 +27,7 @@ const createTables = async () => {
 
     -- Create users table
     CREATE TABLE users (
-      user_id UUID PRIMARY KEY,
+      id UUID PRIMARY KEY,
       username VARCHAR(50) UNIQUE NOT NULL,
       email VARCHAR(100) UNIQUE NOT NULL,
       password VARCHAR(255) NOT NULL,
@@ -83,7 +83,7 @@ const createAdminUser = async ({ username, password, is_admin }) => {
 
 const createUser = async ({ username, email, password, address, payment_method }) => {
   const SQL = `
-    INSERT INTO users (user_id, username, email, password, address, payment_method) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *
+    INSERT INTO users (id, username, email, password, address, payment_method) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *
   `;
   const response = await client.query(SQL, [uuid.v4(), username, email, await bcrypt.hash(password, 5), address, payment_method]);
   return response.rows[0];
@@ -176,44 +176,47 @@ const deleteCartItem = async (cartItemId) => {
   await client.query(SQL, [cartItemId]);
 };
 
-const findUserWithToken = async (token) => {
-  try {
-    const { id } = jwt.verify(token, JWT);
+// Find user by token
+const findUserByToken = async (token) => {
+    let id;
+    try {
+      const payload = await jwt.verify(token, JWT);
+      id = payload.id;
+    } catch (err) {
+      const error = Error("Not Authorized");
+      error.status = 401;
+      throw error;
+    }
     const SQL = `
-      SELECT * FROM users WHERE user_id = $1
+    SELECT id, first_name, last_name, email FROM users WHERE id = $1
     `;
     const response = await client.query(SQL, [id]);
+    if (!response.rows.length) {
+      const error = Error("not authorized");
+      error.status = 401;
+      throw error;
+    }
     return response.rows[0];
-  } catch (error) {
-    throw {
-      status: 401,
-      message: 'Invalid token'
-    };
-  }
-};
+  };
 
+// Authenticate a user based on email and password
 const authenticate = async ({ email, password }) => {
-  const SQL = `
-    SELECT * FROM users WHERE email = $1
-  `;
-  const response = await client.query(SQL, [email]);
-  const user = response.rows[0];
-  if (!user) {
-    throw {
-      status: 401,
-      message: 'Invalid email or password'
-    };
-  }
-  const valid = await bcrypt.compare(password, user.password);
-  if (!valid) {
-    throw {
-      status: 401,
-      message: 'Invalid email or password'
-    };
-  }
-  const token = jwt.sign({ id: user.user_id }, JWT);
-  return { user, token };
-};
+    const SQL = `
+    SELECT id, password, email FROM users WHERE email = $1
+    `;
+    const response = await client.query(SQL, [email]);
+    if (
+      !response.rows.length ||
+      (await bcrypt.compare(password, response.rows[0].password)) === false
+    ) {
+      const error = Error("Not Authorized");
+      error.status = 401;
+      throw error;
+    }
+    const token = await jwt.sign({ id: response.rows[0].id }, JWT);
+    console.log(token);
+    return { token: token };
+  };
 
 module.exports = {
   client,
@@ -232,6 +235,6 @@ module.exports = {
   fetchOrderDetails,
   deleteProduct,
   deleteCartItem,
-  findUserWithToken,
+  findUserByToken,
   authenticate
 };
