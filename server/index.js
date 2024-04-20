@@ -73,9 +73,9 @@ const isAdmin = async (req, res, next) => {
     }
   });
   
-  app.get('/api/auth/me', isLoggedIn, (req, res, next) => {
+  app.get('/api/auth/me', isLoggedIn, async (req, res, next) => {
     try {
-      res.send(req.user);
+      res.send(await findUserByToken(req.headers.authorization));
     } catch (ex) {
       next(ex);
     }

@@ -1,16 +1,17 @@
 import { useState } from 'react';
-import PropTypes from "prop-types";
 
-const API = "https://fsa-capstone.onrender.com/api";
+const API = "https://fsa-capstone.onrender.com/api/auth";
 
 const Register = () => {
   const [formData, setFormData] = useState({
+    first_name: "",
+    last_name: "",
     username: '',
     email: '',
     password: '',
   });
   const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState(''); 
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -20,22 +21,26 @@ const Register = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch(`${API}/auth/register`, {
+      const response = await fetch(`${API}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData)
       });
-      const data = await response.json();
-      setFormData(data);
+      if (!response.ok) {
+        // If response is not okay, throw an error
+        throw new Error('Failed to create account');
+      }
+
+      // If registration is successful, call the onSuccess callback
+      setSuccessMessage("Account created successfully! Please log in.");
     } catch (error) {
       console.error('Error registering user:', error);
+      // If registration fails, call the onError callback
+      setErrorMessage("Failed to create account");
     }
   };
-
-  setErrorMessage("Failed to create account");
-  setSuccessMessage("Account created successfully! Please log in."); 
 
   // Render the registration form
   return (
@@ -48,27 +53,40 @@ const Register = () => {
       {/* Registration form */}
       <form onSubmit={handleSubmit}>
         {/* First Name input */}
-        <label htmlFor="firstname">
+        <label htmlFor="first_name">
           First Name:
           <input
             type="text"
-            id="firstname"
-            name="firstname"
+            id="first_tname"
+            name="first_name"
             className="input-field"
-            value={formData.firstname}
+            value={formData.first_name}
             onChange={handleChange}
             required
           />
         </label>
         {/* Last Name input */}
-        <label htmlFor="lastname">
+        <label htmlFor="last_name">
           Last Name:
           <input
             type="text"
-            id="lastname"
-            name="lastname"
+            id="last_name"
+            name="last_name"
             className="input-field"
-            value={formData.lastname}
+            value={formData.last_name}
+            onChange={handleChange}
+            required
+          />
+        </label>
+        {/* Last Name input */}
+        <label htmlFor="username">
+          Username:
+          <input
+            type="text"
+            id="username"
+            name="username"
+            className="input-field"
+            value={formData.username}
             onChange={handleChange}
             required
           />
@@ -104,11 +122,6 @@ const Register = () => {
       </form>
     </div>
   );
-};
-
-// PropTypes validation for the Register component
-Register.propTypes = {
-  token: PropTypes.func.isRequired, // Token prop is a required function
 };
 
 export default Register;
