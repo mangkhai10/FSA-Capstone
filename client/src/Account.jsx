@@ -1,54 +1,67 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const API = "https://fsa-capstone.onrender.com/api/auth";
 
 const Account = ({ token }) => {
-  const [userData, setUserData] = useState(null);
+  const [auth, setAuth] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    authenticate();
+  }, []); 
+
+  const authenticate = async () => {
+    if (token) {
       try {
-        const userResponse = await fetch(`${API}/me`, {
+        const response = await fetch(`${API}/me`, {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
+            Authorization: token
           }
         });
-
-        if (!userResponse.ok) {
-          throw new Error('Failed to fetch user data');
+        const json = await response.json();
+        if (response.ok) {
+          setAuth(json);
+        } else {
+          setAuth(null);
+          setErrorMessage(`Failed to fetch user data: ${json.message || response.statusText}`);
         }
-
-        const userData = await userResponse.json();
-        setUserData(userData);
       } catch (error) {
         console.error('Error fetching user data:', error);
-        setErrorMessage("Failed to fetch user data");
+        setErrorMessage('Failed to fetch user data. Please try again later.');
+      } finally {
+        setLoading(false);
       }
-    };
+    }
+  };
 
-    fetchUserData();
+  const logout = () => {
+    window.localStorage.removeItem('token');
+    setAuth({});
+  };
 
-    // Cleanup function
-    return () => {
-      setUserData(null); // Clear user data on component unmount
-    };
-  }, [token]); // Include token in the dependency array to re-fetch data when token changes
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div className="account-container">
+      <div className="navigation-item">
+        <button onClick={logout} className="navigation-link">
+          Logout
+        </button>
+      </div>
       <h2 className="account-heading">Account Information</h2>
       {errorMessage && <p className="error">{errorMessage}</p>}
-      {userData && (
+      {auth && Object.keys(auth).length > 0 && (
         <div className="user-details">
-          <p><strong>Username:</strong> {userData.username}</p>
-          <p><strong>Email:</strong> {userData.email}</p>
-          <p><strong>First Name:</strong> {userData.first_name}</p>
-          <p><strong>Last Name:</strong> {userData.last_name}</p>
-          <p><strong>Address:</strong> {userData.address}</p>
-          <p><strong>Payment Method:</strong> {userData.payment_method}</p>
+          <p><strong>First Name:</strong> {auth.first_name}</p>
+          <p><strong>Last Name:</strong> {auth.last_name}</p>
+          <p><strong>Email:</strong> {auth.email}</p>
+          <p><strong>Address:</strong> {auth.address}</p>
+          <p><strong>Payment Method:</strong> {auth.payment_method}</p>
         </div>
       )}
     </div>

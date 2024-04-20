@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const API = "https://fsa-capstone.onrender.com/api/auth";
 
@@ -6,12 +7,11 @@ const Register = () => {
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
-    username: '',
     email: '',
     password: '',
   });
   const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const history = useNavigate();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -20,6 +20,7 @@ const Register = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     try {
       const response = await fetch(`${API}/register`, {
         method: 'POST',
@@ -28,36 +29,31 @@ const Register = () => {
         },
         body: JSON.stringify(formData)
       });
-      if (!response.ok) {
-        // If response is not okay, throw an error
-        throw new Error('Failed to create account');
-      }
 
-      // If registration is successful, call the onSuccess callback
-      setSuccessMessage("Account created successfully! Please log in.");
+      const json = await response.json();
+      if (response.ok) {
+        window.localStorage.setItem('token', json.token);
+        console.log(json.message || "Register successful");
+        history("/login");
+      } else {
+        setErrorMessage(json.message || 'User already exists. Please login.');
+      }
     } catch (error) {
-      console.error('Error registering user:', error);
-      // If registration fails, call the onError callback
-      setErrorMessage("Failed to create account");
+      console.error('Error during registration:', error);
+      setErrorMessage('Registration failed. Please try again later.');
     }
   };
 
-  // Render the registration form
   return (
     <div className="form-container">
       <h2 className="form-heading">Sign Up</h2>
-      {/* Display success message if registration is successful */}
-      {successMessage && <p className="success">{successMessage}</p>}
-      {/* Display error message if there's an error */}
       {errorMessage && <p className="error">{errorMessage}</p>}
-      {/* Registration form */}
       <form onSubmit={handleSubmit}>
-        {/* First Name input */}
         <label htmlFor="first_name">
           First Name:
           <input
             type="text"
-            id="first_tname"
+            id="first_name"
             name="first_name"
             className="input-field"
             value={formData.first_name}
@@ -65,7 +61,6 @@ const Register = () => {
             required
           />
         </label>
-        {/* Last Name input */}
         <label htmlFor="last_name">
           Last Name:
           <input
@@ -78,20 +73,6 @@ const Register = () => {
             required
           />
         </label>
-        {/* Last Name input */}
-        <label htmlFor="username">
-          Username:
-          <input
-            type="text"
-            id="username"
-            name="username"
-            className="input-field"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
-        </label>
-        {/* Email input */}
         <label htmlFor="email">
           Email:
           <input
@@ -104,7 +85,6 @@ const Register = () => {
             required
           />
         </label>
-        {/* Password input */}
         <label htmlFor="password">
           Password:
           <input
@@ -117,7 +97,6 @@ const Register = () => {
             required
           />
         </label>
-        {/* Submit button */}
         <button type="submit">Submit</button>
       </form>
     </div>

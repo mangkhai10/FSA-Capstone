@@ -1,8 +1,8 @@
-/* eslint-disable react/prop-types */
-
 import { Link } from 'react-router-dom';
 
 const Navigation = ({ token }) => {
+
+
   return (
     <nav className="navigation">
       <ul className="navigation-list">
@@ -14,6 +14,11 @@ const Navigation = ({ token }) => {
         <li className="navigation-item">
           <Link to="/products" className="navigation-link">
             Products
+          </Link>
+        </li>
+        <li className="navigation-item">
+          <Link to="/cart" className="navigation-link">
+            Cart
           </Link>
         </li>
         {!token && (

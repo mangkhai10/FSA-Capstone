@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const API = "https://fsa-capstone.onrender.com/api/auth";
 
@@ -9,6 +10,8 @@ const Login = () => {
   });
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const history = useNavigate();
+
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -28,9 +31,12 @@ const Login = () => {
       if (!response.ok) {
         throw new Error('Failed to log in');
       }
-      // If login is successful, you can redirect the user or perform any other actions
+      const data = await response.json();
+    // Store the token in local storage
+    localStorage.setItem('token', data.token);
       console.log('Logged in successfully');
       setSuccessMessage('Logged in successfully');
+      history('/account');
     } catch (error) {
       console.error('Error logging in:', error);
       setErrorMessage("Failed to log in");
