@@ -4,6 +4,7 @@ const {
     createAdminUser,
     createTables,
     createUser,
+    updateUser,
     createProduct,
     createCartItem,
     createOrderItem,
@@ -39,27 +40,30 @@ const isLoggedIn = async (req, res, next) => {
       next(ex);
     }
   };
-  const isAdmin = async (req, res, next) => {
-    try {
-      req.user = await findUserByToken(req.headers.authorization);
-      if (req.user.role === 'admin') {
-        next();
-      } else {
-        res.status(401).send('Unauthorized');
-      }
-    } catch (ex) {
-      next(ex);
+// Middleware to check if the user has admin role
+const isAdmin = async (req, res, next) => {
+  try {
+    const user = await findUserByToken(req.headers.authorization);
+    if (user.role === 'admin') {
+      next();
+    } else {
+      res.status(403).send('Forbidden');
     }
-  };
+  } catch (ex) {
+    next(ex);
+  }
+};
   
   // Authentication endpoints
   app.post('/api/auth/register', async (req, res, next) => {
     try {
-      res.send(await createUser(req.body));
+      const { first_name, last_name, username, email, password } = req.body;
+      res.send(await createUser({ first_name, last_name, username, email, password }));
     } catch (ex) {
       next(ex);
     }
   });
+  
   
   app.post('/api/auth/login', async (req, res, next) => {
     try {
@@ -76,7 +80,35 @@ const isLoggedIn = async (req, res, next) => {
       next(ex);
     }
   });
-  
+
+  app.put('/api/users/:userId', isLoggedIn, async (req, res, next) => {
+    try {
+      const { address, payment_method } = req.body;
+      const updatedUser = await updateUser(req.params.userId, { address, payment_method });
+      res.send(updatedUser);
+    } catch (ex) {
+      next(ex);
+    }
+  });
+
+   // User endpoints
+   app.post('/api/users', async (req, res, next) => {
+    try {
+      res.status(201).send(await createUser(req.body));
+    } catch (ex) {
+      next(ex);
+    }
+  });
+
+  app.get('/api/users', async (req, res, next) => {
+    try {
+      res.send(await fetchUsers());
+    } catch (ex) {
+      next(ex);
+    }
+  });
+
+
   // Admin endpoints
   
   
@@ -127,23 +159,6 @@ const isLoggedIn = async (req, res, next) => {
     }
   });
   
-  // User endpoints
-  app.post('/api/users', async (req, res, next) => {
-    try {
-      res.status(201).send(await createUser(req.body));
-    } catch (ex) {
-      next(ex);
-    }
-  });
-
-  app.get('/api/users', async (req, res, next) => {
-    try {
-      res.send(await fetchUsers());
-    } catch (ex) {
-      next(ex);
-    }
-  });
-
   
   // Product endpoints
   app.post('/api/products', async (req, res, next) => {
@@ -181,74 +196,54 @@ const isLoggedIn = async (req, res, next) => {
 
 
   // Cart Item endpoints
-  app.post('/api/cartitems', isLoggedIn, async (req, res, next) => {
-    try {
-      res.status(201).send(await createCartItem(req.body));
-    } catch (ex) {
-      next(ex);
-    }
-  });
-  
-  app.get('/api/cartitems', isLoggedIn, async (req, res, next) => {
-    try {
-      res.send(await fetchCartItems());
-    } catch (ex) {
-      next(ex);
-    }
-  });
-  
-  app.delete('/api/cartitems/:productId', isLoggedIn ,async (req, res, next) => {
-    try {
-      await deleteCartItem(req.params.productId);
-      res.sendStatus(204);
-    } catch (ex) {
-      next(ex);
-    }
-  });
-  
-  app.put('/api/cartitems/:productId', isLoggedIn, async (req, res,next) => {
-    try {
-      res.send(await fetchCartItems(req.body));
-    } catch (ex) {
-      next(ex);
-    }
-  });
-  
   app.post('/api/cartitems', async (req, res, next) => {
     try {
-      res.status(201).send(await createCartItem(req.body));
+        let user_id;
+        if (req.headers.authorization) {
+            const user = await findUserByToken(req.headers.authorization);
+            user_id = user.id;
+        }
+        // Assuming user_id is null for non-authenticated users
+        const cartItem = { ...req.body, user_id };
+        res.status(201).send(await createCartItem(cartItem));
     } catch (ex) {
-      next(ex);
+        next(ex);
     }
-  });
-
+});
+// Get cart items endpoint (for both authenticated and non-authenticated users)
   app.get('/api/cartitems', async (req, res, next) => {
     try {
-      res.send(await fetchCartItems());
-    } catch (ex) {
-      next(ex);
+      const user_id = req.headers.authorization ? (await findUserByToken(req.headers.authorization)).id : null ;
+      const cartitems = await fetchCartItems(user_id);
+      res.send(cartitems);
+      } catch (ex) {
+        next(ex);
     }
   });
-  app.delete('/api/cartitems/:productId', async (req, res, next) => {
-    try {
-      await deleteCartItem(req.params.productId);
+  // Update cart item endpoint (for both authenticated and non-authenticated users)
+app.put('/api/cartitems/:cartItemId', async (req, res, next) => {
+  try {
+      const user_id = req.headers.authorization ? (await findUserByToken(req.headers.authorization)).id : null;
+      const cartItem = { ...req.body, user_id };
+      const updatedCartItem = await updateCartItem(req.params.cartItemId, cartItem);
+      res.send(updatedCartItem);
+  } catch (ex) {
+      next(ex);
+  }
+});
+// Delete cart item endpoint (for both authenticated and non-authenticated users)
+app.delete('/api/cartitems/:cartItemId', async (req, res, next) => {
+  try {
+      const user_id = req.headers.authorization ? (await findUserByToken(req.headers.authorization)).id : null;
+      await deleteCartItem(req.params.cartItemId, user_id);
       res.sendStatus(204);
-    } catch (ex) {
+  } catch (ex) {
       next(ex);
-    }
-  });
-  
-  app.put('/api/cartitems/:productId', async (req, res,next) => {
-    try {
-      res.send(await fetchCartItems(req.body));
-    } catch (ex) {
-      next(ex);
-    }
-  });
-  
+  }
+});
 
   // Order Item endpoints
-  app.post('/api/orderitems', async (req, res, next) => {
+  app.post('/api/orderitems', isLoggedIn, async (req, res, next) => {
     try {
       res.status(201).send(await createOrderItem(req.body));
     } catch (ex) {
@@ -256,7 +251,7 @@ const isLoggedIn = async (req, res, next) => {
     }
   });
   
-  app.get('/api/orderitems', async (req, res, next) => {
+  app.get('/api/orderitems', isLoggedIn, async (req, res, next) => {
     try {
       res.send(await fetchOrderItems());
     } catch (ex) {
@@ -265,7 +260,7 @@ const isLoggedIn = async (req, res, next) => {
   });
   
   // Order Item Detail endpoints
-  app.post('/api/orderitems/:orderId/orderdetails', async (req, res, next) => {
+  app.post('/api/orderitems/:orderId/orderdetails', isLoggedIn, async (req, res, next) => {
     try {
       res.status(201).send(await createOrderDetail(req.body));
     } catch (ex) {
@@ -273,18 +268,9 @@ const isLoggedIn = async (req, res, next) => {
     }
   });
   
-  app.get('/api/orderitems/:orderId/orderdetails', async (req, res, next) => {
+  app.get('/api/orderitems/:orderId/orderdetails', isLoggedIn, async (req, res, next) => {
     try {
       res.send(await fetchOrderDetails(req.params.orderId));
-    } catch (ex) {
-      next(ex);
-    }
-  });
-  
-  app.delete('/api/cartitems/:cartItemId', async (req, res, next) => {
-    try {
-      await deleteCartItem(req.params.cartItemId);
-      res.sendStatus(204);
     } catch (ex) {
       next(ex);
     }
@@ -294,7 +280,7 @@ const isLoggedIn = async (req, res, next) => {
   app.post('/api/checkout', isLoggedIn, async (req, res, next) => {
     try {
       const { address, paymentMethod } = req.body;
-      const order = await checkout(req.user.user_id, address, paymentMethod);
+      const order = await checkout(req.user.id, address, paymentMethod);
       res.status(201).json(order);
     } catch (error) {
       next(error);

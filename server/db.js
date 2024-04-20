@@ -28,11 +28,13 @@ const createTables = async () => {
     -- Create users table
     CREATE TABLE users (
       id UUID PRIMARY KEY,
+      first_name VARCHAR(50) NOT NULL,
+      last_name VARCHAR(50) NOT NULL,
       username VARCHAR(50) UNIQUE NOT NULL,
       email VARCHAR(100) UNIQUE NOT NULL,
       password VARCHAR(255) NOT NULL,
-      address VARCHAR(100) NOT NULL,
-      payment_method VARCHAR(100) NOT NULL
+      address VARCHAR(100) NULL,
+      payment_method VARCHAR(100) NULL
     );
 
     -- Create products table
@@ -82,11 +84,18 @@ const createAdminUser = async ({ username, password, is_admin }) => {
   return response.rows[0];
 };
 
-const createUser = async ({ username, email, password, address, payment_method }) => {
+const createUser = async ({ first_name, last_name, username, email, password, address, payment_method }) => {
   const SQL = `
-    INSERT INTO users (id, username, email, password, address, payment_method) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *
+    INSERT INTO users (id, first_name, last_name, username, email, password, address, payment_method) VALUES ($1, $2, $3, $4, $5, $6,$7,$8) RETURNING *
   `;
-  const response = await client.query(SQL, [uuid.v4(), username, email, await bcrypt.hash(password, 5), address, payment_method]);
+  const response = await client.query(SQL, [uuid.v4(), first_name, last_name, username, email, await bcrypt.hash(password, 5), address, payment_method]);
+  return response.rows[0];
+};
+const updateUser = async (userId, { address, payment_method }) => {
+  const SQL = `
+    UPDATE users SET address = $1, payment_method = $2 WHERE id = $3 RETURNING *
+  `;
+  const response = await client.query(SQL, [address, payment_method, userId]);
   return response.rows[0];
 };
 
@@ -179,45 +188,42 @@ const deleteCartItem = async (cartItemId) => {
 
 // Find user by token
 const findUserByToken = async (token) => {
-    let id;
-    try {
-      const payload = await jwt.verify(token, JWT);
-      id = payload.id;
-    } catch (err) {
-      const error = Error("Not Authorized");
-      error.status = 401;
-      throw error;
-    }
-    const SQL = `
-    SELECT id, first_name, last_name, email FROM users WHERE id = $1
-    `;
-    const response = await client.query(SQL, [id]);
-    if (!response.rows.length) {
-      const error = Error("not authorized");
-      error.status = 401;
-      throw error;
-    }
-    return response.rows[0];
-  };
-
+  let id;
+  try {
+    const payload = await jwt.verify(token, JWT);
+    id = payload.id;
+  } catch (ex) {
+    const error = Error('not authorized');
+    error.status = 401;
+    throw error;
+  }
+  const SQL = `
+    SELECT id, username FROM users WHERE id=$1;
+  `;
+  const response = await client.query(SQL, [id]);
+  if (!response.rows.length) {
+    const error = Error('not authorized');
+    error.status = 401;
+    throw error;
+  }
+  return response.rows[0];
+};
 // Authenticate a user based on email and password
 const authenticate = async ({ email, password }) => {
-    const SQL = `
-    SELECT id, password, email FROM users WHERE email = $1
-    `;
-    const response = await client.query(SQL, [email]);
-    if (
-      !response.rows.length ||
-      (await bcrypt.compare(password, response.rows[0].password)) === false
-    ) {
-      const error = Error("Not Authorized");
-      error.status = 401;
-      throw error;
-    }
-    const token = await jwt.sign({ id: response.rows[0].id }, JWT);
-    console.log(token);
-    return { token: token };
-  };
+  const SQL = `
+    SELECT id, password, email
+   FROM users 
+   WHERE email=$1;
+  `;
+  const response = await client.query(SQL, [email]);
+  if (!response.rows.length || (await bcrypt.compare(password, response.rows[0].password)) === false) {
+    const error = Error('not authorized');
+    error.status = 401;
+    throw error;
+  }
+  const token = await jwt.sign({ id: response.rows[0].id }, JWT);
+  return { token: token};
+};
 
 module.exports = {
   client,
@@ -225,6 +231,7 @@ module.exports = {
   createTables,
   createAdminUser,
   createUser,
+  updateUser,
   createProduct,
   createCartItem,
   createOrderItem,

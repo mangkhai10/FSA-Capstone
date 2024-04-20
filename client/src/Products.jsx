@@ -11,7 +11,7 @@ const Products = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  },);
 
   const fetchProducts = async () => {
     try {

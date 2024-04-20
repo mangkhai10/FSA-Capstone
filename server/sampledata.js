@@ -14,6 +14,8 @@ const SampleData = async () => {
     // Create sample users
     const users = await Promise.all([
       createUser({
+        first_name: "Moe",
+        last_name: "Show",
         username: "user1",
         email: "user1@example.com",
         password: "password1",
@@ -21,6 +23,8 @@ const SampleData = async () => {
         payment_method: "Credit Card"
       }),
       createUser({
+        first_name: "Joe",
+        last_name: "Doe",
         username: "user2",
         email: "user2@example.com",
         password: "password2",
