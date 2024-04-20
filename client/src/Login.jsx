@@ -8,6 +8,7 @@ const Login = () => {
     password: '',
   });
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -29,6 +30,7 @@ const Login = () => {
       }
       // If login is successful, you can redirect the user or perform any other actions
       console.log('Logged in successfully');
+      setSuccessMessage('Logged in successfully');
     } catch (error) {
       console.error('Error logging in:', error);
       setErrorMessage("Failed to log in");
@@ -38,6 +40,9 @@ const Login = () => {
   return (
     <div className="form-container">
       <h2 className="form-heading">Login</h2>
+      {/* Display success message if registration is successful */}
+      {successMessage && <p className="success">{successMessage}</p>}
+      {/* Display error message if there's an error */}
       {errorMessage && <p className="error">{errorMessage}</p>}
       <form onSubmit={handleSubmit}>
         <label htmlFor="email">

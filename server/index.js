@@ -57,8 +57,8 @@ const isAdmin = async (req, res, next) => {
   // Authentication endpoints
   app.post('/api/auth/register', async (req, res, next) => {
     try {
-      const { first_name, last_name, username, email, password } = req.body;
-      res.send(await createUser({ first_name, last_name, username, email, password }));
+      const { first_name, last_name, email, password } = req.body;
+      res.send(await createUser({ first_name, last_name, email, password }));
     } catch (ex) {
       next(ex);
     }

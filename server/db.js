@@ -30,7 +30,6 @@ const createTables = async () => {
       id UUID PRIMARY KEY,
       first_name VARCHAR(50) NOT NULL,
       last_name VARCHAR(50) NOT NULL,
-      username VARCHAR(50) UNIQUE NOT NULL,
       email VARCHAR(100) UNIQUE NOT NULL,
       password VARCHAR(255) NOT NULL,
       address VARCHAR(100) NULL,
@@ -84,11 +83,11 @@ const createAdminUser = async ({ username, password, is_admin }) => {
   return response.rows[0];
 };
 
-const createUser = async ({ first_name, last_name, username, email, password, address, payment_method }) => {
+const createUser = async ({ first_name, last_name, email, password, address, payment_method }) => {
   const SQL = `
-    INSERT INTO users (id, first_name, last_name, username, email, password, address, payment_method) VALUES ($1, $2, $3, $4, $5, $6,$7,$8) RETURNING *
+    INSERT INTO users (id, first_name, last_name, email, password, address, payment_method) VALUES ($1, $2, $3, $4, $5, $6,$7) RETURNING *
   `;
-  const response = await client.query(SQL, [uuid.v4(), first_name, last_name, username, email, await bcrypt.hash(password, 5), address, payment_method]);
+  const response = await client.query(SQL, [uuid.v4(), first_name, last_name, email, await bcrypt.hash(password, 5), address, payment_method]);
   return response.rows[0];
 };
 const updateUser = async (userId, { address, payment_method }) => {
@@ -198,7 +197,7 @@ const findUserByToken = async (token) => {
     throw error;
   }
   const SQL = `
-    SELECT id, username FROM users WHERE id=$1;
+    SELECT id, email FROM users WHERE id=$1;
   `;
   const response = await client.query(SQL, [id]);
   if (!response.rows.length) {

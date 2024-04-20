@@ -9,13 +9,11 @@ const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [quantityMap, setQuantityMap] = useState({});
 
-  useEffect(() => {
-    fetchProducts();
-  },);
 
   const fetchProducts = async () => {
     try {
       const response = await fetch(`${API}/products`, {
+        method: 'GET',
         headers: {
           "Content-Type": "application/json",
         },
@@ -28,6 +26,10 @@ const Products = () => {
       console.error('Error fetching products:', error);
     }
   };
+  useEffect(() => {
+    fetchProducts();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[]);
 
   const initializeQuantityMap = (products) => {
     const initialQuantityMap = {};
