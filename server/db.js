@@ -55,7 +55,6 @@ const createTables = async () => {
       product_id INT REFERENCES products(product_id),
       quantity INT NOT NULL,
       price DECIMAL(10, 2) NOT NULL,
-      total DECIMAL(10, 2) NOT NULL
     );
 
     -- Create order_items table
@@ -63,8 +62,7 @@ const createTables = async () => {
       order_item_id SERIAL PRIMARY KEY,
       user_id UUID REFERENCES users(id),
       product_id INT REFERENCES products(product_id),
-      quantity INT NOT NULL,
-      price DECIMAL(10, 2) NOT NULL,
+      order_place TIMESTAMP NOT NULL,
       total DECIMAL(10, 2) NOT NULL
     );
 
@@ -111,19 +109,19 @@ const createProduct = async ({ character_name, description, price, stock_quantit
   return response.rows[0];
 };
 
-const createCartItem = async ({ user_id, product_id, quantity, price, total }) => {
+const createCartItem = async ({ user_id, product_id, quantity, price }) => {
   const SQL = `
-    INSERT INTO cart_items (user_id, product_id, quantity, price, total) VALUES ($1, $2, $3,$4, $5) RETURNING *
+    INSERT INTO cart_items (user_id, product_id, quantity, price) VALUES ($1, $2, $3,$4,) RETURNING *
   `;
-  const response = await client.query(SQL, [user_id, product_id, quantity, price, total]);
+  const response = await client.query(SQL, [user_id, product_id, quantity, price]);
   return response.rows[0];
 };
 
-const createOrderItem = async ({ user_id, product_id, quantity, price, total }) => {
+const createOrderItem = async ({ user_id, product_id, quantity, order_place, total }) => {
   const SQL = `
-    INSERT INTO order_items (uuser_id, product_id, quantity, price, total) VALUES ($1, $2, $3.$4,$5) RETURNING *
+    INSERT INTO order_items (user_id, product_id, quantity, order_place, total) VALUES ($1, $2, $3, $4,$5) RETURNING *
   `;
-  const response = await client.query(SQL, [user_id, product_id, quantity, price, total]);
+  const response = await client.query(SQL, [user_id, product_id, quantity, order_place, total]);
   return response.rows[0];
 };
 
