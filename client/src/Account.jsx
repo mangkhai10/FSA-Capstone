@@ -78,42 +78,6 @@ const Account = ({ token }) => {
     }
   };
 
-  const handleDeleteAddress = async () => {
-    try {
-      const response = await fetch(`${API}/users/${user.id}/address`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: token
-        }
-      });
-      if (!response.ok) {
-        throw new Error('Failed to delete address');
-      }
-      // Update user object with deleted address
-    } catch (error) {
-      console.error('Error deleting address:', error);
-      setErrorMessage('Failed to delete address. Please try again later.');
-    }
-  };
-
-  const handleDeletePaymentMethod = async () => {
-    try {
-      const response = await fetch(`${API}/users/${user.id}/payment-method`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: token
-        }
-      });
-      if (!response.ok) {
-        throw new Error('Failed to delete payment method');
-      }
-      // Update user object with deleted payment method
-    } catch (error) {
-      console.error('Error deleting payment method:', error);
-      setErrorMessage('Failed to delete payment method. Please try again later.');
-    }
-  };
-
   return (
     <div className="account-container">
       <div className="navigation-item">
@@ -139,9 +103,6 @@ const Account = ({ token }) => {
           ) : (
             <button onClick={handleEdit}>Edit Address</button>
           )}
-          {user.address && (
-            <button onClick={handleDeleteAddress}>Delete Address</button>
-          )}
           {editing && <button onClick={handleSave}>Save</button>}
           <p>Payment Method: {user.payment_method}</p>
           {editing ? (
@@ -152,9 +113,6 @@ const Account = ({ token }) => {
             />
           ) : (
             <button onClick={handleEdit}>Edit Payment Method</button>
-          )}
-          {user.payment_method && (
-            <button onClick={handleDeletePaymentMethod}>Delete Payment Method</button>
           )}
           {editing && <button onClick={handleSave}>Save</button>}
         </div>
