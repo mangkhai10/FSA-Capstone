@@ -238,8 +238,8 @@ app.put('/api/cartitems/:cart_id', async (req, res, next) => {
 
 app.delete('/api/cartitems/:cart_id', async (req, res, next) => {
   try {
-    const cartItemId = parseInt(req.params.cartItemId);
-    await deleteCartItem(cartItemId);
+    const cart_id = parseInt(req.params.cart_id);
+    await deleteCartItem(cart_id);
     res.sendStatus(204);
   } catch (ex) {
     next(ex);
