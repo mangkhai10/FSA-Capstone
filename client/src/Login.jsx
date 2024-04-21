@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const API = "https://fsa-capstone.onrender.com/api/auth";
 
@@ -10,7 +9,6 @@ const Login = () => {
   });
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const history = useNavigate();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -35,7 +33,7 @@ const Login = () => {
     localStorage.setItem('token', data.token);
       console.log('Logged in successfully');
       setSuccessMessage('Logged in successfully');
-      window.location.reload(history('/products'));
+      window.location.href = '/products';
     } catch (error) {
       console.error('Failed to log in', error);
       setErrorMessage('User doesnt exist');

@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 const API = "https://fsa-capstone.onrender.com/api";
 
@@ -10,11 +9,10 @@ const Account = ({ token }) => {
   const [editing, setEditing] = useState(false);
   const [editedAddress, setEditedAddress] = useState('');
   const [editedPaymentMethod, setEditedPaymentMethod] = useState('');
-  const history = useNavigate();
 
   useEffect(() => {
     authenticate();
-  }, []); // Run once when component mounts
+  }, []);  
 
   const authenticate = async () => {
     if (token) {
@@ -41,9 +39,10 @@ const Account = ({ token }) => {
 
   const logout = () => {
     window.localStorage.removeItem('token');
-    history('/products');
+    window.location.href = '/login';
   };
-
+  
+  
   const handleEdit = () => {
     setEditing(true);
     setEditedAddress(user.address || '');
@@ -91,10 +90,6 @@ const Account = ({ token }) => {
         throw new Error('Failed to delete address');
       }
       // Update user object with deleted address
-      setUser(prevUser => ({
-        ...prevUser,
-        address: null
-      }));
     } catch (error) {
       console.error('Error deleting address:', error);
       setErrorMessage('Failed to delete address. Please try again later.');
@@ -113,10 +108,6 @@ const Account = ({ token }) => {
         throw new Error('Failed to delete payment method');
       }
       // Update user object with deleted payment method
-      setUser(prevUser => ({
-        ...prevUser,
-        payment_method: null
-      }));
     } catch (error) {
       console.error('Error deleting payment method:', error);
       setErrorMessage('Failed to delete payment method. Please try again later.');
