@@ -208,13 +208,14 @@ app.post('/api/products/:productId ', async (req, res, next) => {
       next(ex);
     }
   });
-  
+
 
   // Cart Item endpoints
   app.post('/api/cartitems', async (req, res, next) => {
     try {
         let user_id;
         if (req.headers.authorization) {
+            // User is authenticated
             const user = await findUserByToken(req.headers.authorization);
             user_id = user.id;
         }
@@ -225,6 +226,7 @@ app.post('/api/products/:productId ', async (req, res, next) => {
         next(ex);
     }
 });
+
 // Get cart items endpoint (for both authenticated and non-authenticated users)
   app.get('/api/cartitems', async (req, res, next) => {
     try {

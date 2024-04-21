@@ -53,7 +53,9 @@ const createTables = async () => {
       cart_item_id SERIAL PRIMARY KEY,
       user_id UUID REFERENCES users(id),
       product_id INT REFERENCES products(product_id),
-      quantity INT NOT NULL
+      quantity INT NOT NULL,
+      price DECIMAL(10, 2) NOT NULL,
+      total DECIMAL(10, 2) NOT NULL
     );
 
     -- Create order_items table
@@ -61,7 +63,9 @@ const createTables = async () => {
       order_item_id SERIAL PRIMARY KEY,
       user_id UUID REFERENCES users(id),
       product_id INT REFERENCES products(product_id),
-      quantity INT NOT NULL
+      quantity INT NOT NULL,
+      price DECIMAL(10, 2) NOT NULL,
+      total DECIMAL(10, 2) NOT NULL
     );
 
     -- Create order_details table
@@ -107,19 +111,19 @@ const createProduct = async ({ character_name, description, price, stock_quantit
   return response.rows[0];
 };
 
-const createCartItem = async ({ user_id, product_id, quantity }) => {
+const createCartItem = async ({ user_id, product_id, quantity, price, total }) => {
   const SQL = `
-    INSERT INTO cart_items (user_id, product_id, quantity) VALUES ($1, $2, $3) RETURNING *
+    INSERT INTO cart_items (user_id, product_id, quantity, price, total) VALUES ($1, $2, $3,$4, $5) RETURNING *
   `;
-  const response = await client.query(SQL, [user_id, product_id, quantity]);
+  const response = await client.query(SQL, [user_id, product_id, quantity, price, total]);
   return response.rows[0];
 };
 
-const createOrderItem = async ({ user_id, product_id, quantity }) => {
+const createOrderItem = async ({ user_id, product_id, quantity, price, total }) => {
   const SQL = `
-    INSERT INTO order_items (user_id, product_id, quantity) VALUES ($1, $2, $3) RETURNING *
+    INSERT INTO order_items (uuser_id, product_id, quantity, price, total) VALUES ($1, $2, $3.$4,$5) RETURNING *
   `;
-  const response = await client.query(SQL, [user_id, product_id, quantity]);
+  const response = await client.query(SQL, [user_id, product_id, quantity, price, total]);
   return response.rows[0];
 };
 
@@ -165,12 +169,20 @@ const fetchProducts = async () => {
 };
 
 const fetchCartItems = async (user_id) => {
-  const SQL = `
-    SELECT * FROM cart_items WHERE user_id = $1
-  `;
-  const response = await client.query(SQL, [user_id]);
+  let SQL;
+  let params;
+  if (user_id) {
+    SQL = `SELECT * FROM cart_items WHERE user_id = $1`;
+    params = [user_id];
+  } else {
+    // Query for cart items for non-authenticated users
+    SQL = `SELECT * FROM cart_items WHERE user_id IS NULL`;
+    params = [];
+  }
+  const response = await client.query(SQL, params);
   return response.rows;
 };
+
 
 const fetchOrderItems = async (user_id) => {
   const SQL = `
