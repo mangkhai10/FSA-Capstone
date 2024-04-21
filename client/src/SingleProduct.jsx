@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
+import { useParams } from "react-router-dom";
 
 const API = "https://fsa-capstone.onrender.com/api";
 
-const SingleProduct = ({ productId }) => {
+const SingleProduct = () => {
+  const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  
 
   useEffect(() => {
     const fetchSingleProduct = async () => {
@@ -16,7 +19,6 @@ const SingleProduct = ({ productId }) => {
           },
         });
         const productData = await response.json();
-        console.log('Product Data:', productData); // Log the product data to inspect the response
         setProduct(productData);
       } catch (error) {
         console.error('Error fetching single product:', error);
@@ -40,7 +42,7 @@ const SingleProduct = ({ productId }) => {
       });
   
       if (response.ok) {
-        // Update stock quantity after successful addition to cart
+        console.log('Product added to cart:', product);
         const updatedStockQuantity = product.stock_quantity - quantity;
         setProduct({ ...product, stock_quantity: updatedStockQuantity });
       } else {
