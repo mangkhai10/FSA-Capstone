@@ -184,6 +184,21 @@ const deleteCartItem = async (cartItemId) => {
   `;
   await client.query(SQL, [cartItemId]);
 };
+const deleteAddress = async (userId) => {
+  const SQL = `
+    UPDATE users SET address = NULL WHERE user_id = $1 RETURNING *
+  `;
+  const response = await client.query(SQL, [userId]);
+  return response.rows[0];
+};
+
+const deletePaymentMethod = async (userId) => {
+  const SQL = `
+    UPDATE users SET payment_method = NULL WHERE user_id = $1 RETURNING *
+  `;
+  const response = await client.query(SQL, [userId]);
+  return response.rows[0];
+};
 
 // Find user by token
 const findUserByToken = async (token) => {
@@ -243,5 +258,7 @@ module.exports = {
   deleteProduct,
   deleteCartItem,
   findUserByToken,
-  authenticate
+  authenticate,
+  deleteAddress,
+  deletePaymentMethod
 };

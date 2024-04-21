@@ -16,7 +16,9 @@ const {
     deleteProduct,
     deleteCartItem,
     findUserByToken,
-    authenticate
+    authenticate,
+    deleteAddress,
+    deletePaymentMethod
   } = require('./db');
   const express = require('express');
   const app = express();
@@ -116,7 +118,29 @@ const isAdmin = async (req, res, next) => {
     }
   });
 
+  app.delete('/api/users/:userId', async (req, res, next) => {
+    try {
+      res.send(await delete(req.params.userId));
+    } catch (ex) {
+      next(ex);
+    }
+  });
 
+  app.delete('/api/users/:userId', async (req, res, next) => { 
+    try {
+      res.send(await deleteAddress(req.params.userId));
+    } catch (ex) {
+      next(ex);
+    }
+  });
+  
+  app.delete('/api/users/:userId', async (req, res, next) => { 
+    try {
+      res.send(await deletePaymentMethod(req.params.userId));
+    } catch (ex) {
+      next(ex);
+    }
+  });
   // Admin endpoints
   
   
