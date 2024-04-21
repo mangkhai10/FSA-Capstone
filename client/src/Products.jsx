@@ -42,17 +42,30 @@ const Products = () => {
   
   const handleAddToCart = async (productId) => {
     try {
-      await fetch(`${API}/cartitems`, {
+      const quantityToAdd = quantityMap[productId];
+      const response = await fetch(`${API}/cartitems`, {
         method: 'POST',
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           product_id: productId,
-          quantity: quantityMap[productId]
+          quantity: quantityToAdd
         })
       });
-      fetchProducts();
+
+      if (response.ok) {
+        const updatedProducts = products.map(product => {
+          if (product.product_id === productId) {
+            return { ...product, stock_quantity: product.stock_quantity - quantityToAdd };
+          }
+          return product;
+        });
+        setProducts(updatedProducts);
+        setFilteredProducts(updatedProducts);
+      } else {
+        console.error('Failed to add item to cart');
+      }
     } catch (error) {
       console.error('Error adding to cart:', error);
     }
@@ -80,7 +93,7 @@ const Products = () => {
   };
 
   const handleQuantityChange = (productId, quantity) => {
-    const updatedQuantityMap = { ...quantityMap, [productId]: quantity };
+    const updatedQuantityMap = { ...quantityMap, [productId]: isNaN(quantity) || quantity === '' ? '' : parseInt(quantity) };
     setQuantityMap(updatedQuantityMap);
   };
 
@@ -103,10 +116,11 @@ const Products = () => {
         {filteredProducts.map(product => (
           <li key={product.product_id}>
             <Link to={`/product/${product.product_id}`}>
-            <img src={product.image_url} alt={product.name} style={{ maxWidth: '100px', maxHeight: '100px' }} />
-            </Link>
+              <img src={product.image_url} alt={product.name} style={{ maxWidth: '100px', maxHeight: '100px' }} />
+            
             {/* Display other product details */}
             <div>Name: {product.name}</div>
+            </Link>
             <div>Series: {product.series}</div>
             <div>Price: {product.price}</div>
             <div>Stock Quantity: {product.stock_quantity}</div>

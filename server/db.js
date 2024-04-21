@@ -138,13 +138,14 @@ const createSingleProduct = async ({ name, description, price, stock_quantity, c
   return response.rows[0];
 }
 
-const fetchSingleProduct = async () => {
+const fetchSingleProduct = async (productId) => {
   const SQL = `
-    SELECT * FROM products
+    SELECT * FROM products WHERE product_id = $1
   `;
-  const response = await client.query(SQL);
+  const response = await client.query(SQL, [productId]);
   return response.rows[0];
-}
+};
+
 
 const fetchUsers = async () => {
   const SQL = `
