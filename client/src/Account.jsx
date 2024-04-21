@@ -1,16 +1,16 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const API = "https://fsa-capstone.onrender.com/api/auth";
 
 const Account = ({ token }) => {
-  const [userData, setUserData] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [user, setUser] = useState(null);
   const history = useNavigate();
 
   useEffect(() => {
     authenticate();
-  }, [token]); 
+  }, []); // Run once when component mounts
 
   const authenticate = async () => {
     if (token) {
@@ -25,7 +25,7 @@ const Account = ({ token }) => {
           throw new Error('Failed to fetch user data');
         }
         const userData = await response.json();
-        setUserData(userData);
+        setUser(userData); // Set user details in state
       } catch (error) {
         console.error('Error fetching user data:', error);
         setErrorMessage('Failed to fetch user data. Please try again later.');
@@ -36,7 +36,6 @@ const Account = ({ token }) => {
   const logout = () => {
     window.localStorage.removeItem('token');
     history('/products');
-    window.location.reload();
   };
 
   return (
@@ -48,11 +47,13 @@ const Account = ({ token }) => {
       </div>
       <h2 className="account-heading">Account Information</h2>
       {errorMessage && <p className="error">{errorMessage}</p>}
-      {userData && (
+      {user && (
         <div>
-          <p>First Name: {userData.first_name}</p>
-          <p>Email: {userData.email}</p>
-          {/* Render other user data as needed */}
+          <p>First Name: {user.first_name}</p>
+          <p>Last Name: {user.last_name}</p>
+          <p>Email: {user.email}</p>
+          <p>Address: {user.address}</p>
+          <p>Payment Method: {user.payment_method}</p>
         </div>
       )}
     </div>
