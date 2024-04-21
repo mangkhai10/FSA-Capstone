@@ -126,7 +126,7 @@ const isAdmin = async (req, res, next) => {
     }
   });
 
-  app.delete('/api/users/:userId', async (req, res, next) => { 
+  app.delete('/api/users/:userId/address',isLoggedIn, async (req, res, next) => { 
     try {
       res.send(await deleteAddress(req.params.userId));
     } catch (ex) {
@@ -134,7 +134,7 @@ const isAdmin = async (req, res, next) => {
     }
   });
   
-  app.delete('/api/users/:userId', async (req, res, next) => { 
+  app.delete('/api/users/:userId/payment-method', isLoggedIn, async (req, res, next) => { 
     try {
       res.send(await deletePaymentMethod(req.params.userId));
     } catch (ex) {
