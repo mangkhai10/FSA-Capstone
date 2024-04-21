@@ -99,7 +99,7 @@ const updateUser = async (userId, { address, payment_method }) => {
   return response.rows[0];
 };
 
-const createProduct = async ({ name, description, price, stock_quantity, category, image_url ,series}) => {
+const createProduct = async ({ character_name, description, price, stock_quantity, category, image_url ,series}) => {
   const SQL = `
     INSERT INTO products (character_name, description, price, stock_quantity, category, image_url, series) VALUES ($1, $2, $3, $4, $5, $6,$7) RETURNING *
   `;
