@@ -228,7 +228,7 @@ app.get('/api/cartitems', async (req, res, next) => {
   }
 });
 
-app.put('/api/cartitems/:cartItemId', async (req, res, next) => {
+app.put('/api/cartitems/:productId', async (req, res, next) => {
   try {
     res.send(await fetchCartItems(req.body));
   } catch (ex) {
@@ -236,7 +236,7 @@ app.put('/api/cartitems/:cartItemId', async (req, res, next) => {
   }
 });
 
-app.delete('/api/cartitems/:cartItemId', async (req, res, next) => {
+app.delete('/api/cartitems/:productId', async (req, res, next) => {
   try {
     await deleteCartItem(req.params.productId);
     res.sendStatus(204);
