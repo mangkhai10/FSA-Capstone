@@ -166,18 +166,11 @@ const fetchProducts = async () => {
   return response.rows;
 };
 
-const fetchCartItems = async (user_id) => {
-  let SQL;
-  let params;
-  if (user_id) {
-    SQL = `SELECT * FROM cart_items WHERE user_id = $1`;
-    params = [user_id];
-  } else {
-    // Query for cart items for non-authenticated users
-    SQL = `SELECT * FROM cart_items WHERE user_id IS NULL`;
-    params = [];
-  }
-  const response = await client.query(SQL, params);
+const fetchCartItems = async () => {
+  const SQL = `
+    SELECT * FROM cart_items
+  `;
+  const response = await client.query(SQL);
   return response.rows;
 };
 
