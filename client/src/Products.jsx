@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const API = "https://fsa-capstone.onrender.com/api";
 
@@ -38,7 +39,7 @@ const Products = () => {
     });
     setQuantityMap(initialQuantityMap);
   };
-
+  
   const handleAddToCart = async (productId) => {
     try {
       await fetch(`${API}/cartitems`, {
@@ -101,9 +102,9 @@ const Products = () => {
       <ul>
         {filteredProducts.map(product => (
           <li key={product.product_id}>
-            {/* Display the product image */}
+            <Link to={`/product/${product.product_id}`}>
             <img src={product.image_url} alt={product.name} style={{ maxWidth: '100px', maxHeight: '100px' }} />
-
+            </Link>
             {/* Display other product details */}
             <div>Name: {product.name}</div>
             <div>Series: {product.series}</div>

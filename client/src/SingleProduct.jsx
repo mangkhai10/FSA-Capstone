@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 const API = "https://fsa-capstone.onrender.com/api";
 
-export const SingleProduct = ({ productId }) => {
+const SingleProduct = ({ productId }) => {
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
@@ -43,3 +43,5 @@ export const SingleProduct = ({ productId }) => {
     </div>
   );
 };
+
+export default SingleProduct;

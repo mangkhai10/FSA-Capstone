@@ -130,6 +130,21 @@ const createOrderDetail = async ({ user_id, total_amount, status }) => {
   const response = await client.query(SQL, [user_id, total_amount, status]);
   return response.rows[0];
 };
+const createSingleProduct = async ({ name, description, price, stock_quantity, category, image_url ,series}) => {
+  const SQL = `
+    INSERT INTO products (name, description, price, stock_quantity, category, image_url, series) VALUES ($1, $2, $3, $4, $5, $6,$7) RETURNING *
+  `;
+  const response = await client.query(SQL, [name, description, price, stock_quantity, category, image_url, series]);
+  return response.rows[0];
+}
+
+const fetchSingleProduct = async () => {
+  const SQL = `
+    SELECT * FROM products
+  `;
+  const response = await client.query(SQL);
+  return response.rows[0];
+}
 
 const fetchUsers = async () => {
   const SQL = `
@@ -245,5 +260,7 @@ module.exports = {
   deleteProduct,
   deleteCartItem,
   findUserByToken,
-  authenticate
+  authenticate,
+  createSingleProduct,
+  fetchSingleProduct,
 };

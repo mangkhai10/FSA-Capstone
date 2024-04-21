@@ -17,6 +17,8 @@ const {
     deleteCartItem,
     findUserByToken,
     authenticate,
+    createSingleProduct,
+    fetchSingleProduct
   } = require('./db');
   const express = require('express');
   const app = express();
@@ -192,23 +194,21 @@ const isAdmin = async (req, res, next) => {
     }
   });
   
+app.post('/api/products/:productId ', async (req, res, next) => {
+  try {
+    res.status(201).send(await createSingleProduct(req.params.productId, req.body));
+  } catch (ex) {
+    next(ex);
+  }
+});
   app.get('/api/products/:productId', async (req, res, next) => {
     try {
-      res.send(await fetchProduct(req.params.productId));
+      res.send(await fetchSingleProduct(req.params.productId));
     } catch (ex) {
       next(ex);
     }
   });
   
-  app.delete('/api/products/:productId', async (req, res, next) => {
-    try {
-      await deleteProduct(req.params.productId);
-      res.sendStatus(204);
-    } catch (ex) {
-      next(ex);
-    }
-  });
-
 
   // Cart Item endpoints
   app.post('/api/cartitems', async (req, res, next) => {
