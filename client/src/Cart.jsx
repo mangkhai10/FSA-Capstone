@@ -1,62 +1,63 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 const API = "https://fsa-capstone.onrender.com/api";
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState([]);
-  const [totalPrice, setTotalPrice] = useState(0);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    // Fetch cart items from local storage or session storage
-    const storedCartItems = JSON.parse(localStorage.getItem('cart')) || [];
-    setCartItems(storedCartItems);
-
-    // Calculate total price
-    const price = storedCartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-    setTotalPrice(price);
+    const fetchCartItems = async () => {
+      try {
+        const response = await fetch(`${API}/cartitems`, {
+          method: 'GET',
+          headers: {
+            "Content-Type": "application/json",
+          }
+        });
+        if (response.ok) {
+          const cartItemsData = await response.json();
+          // Combine cart items with the same product
+          const combinedCartItems = combineCartItems(cartItemsData);
+          setProducts(combinedCartItems);
+        } else {
+          console.error('Failed to fetch cart items');
+        }
+      } catch (error) {
+        console.error('Error fetching cart items:', error);
+      }
+    };
+    fetchCartItems();
   }, []);
 
-  // Function to update quantity of an item in the cart
-  const updateQuantity = async (productId, quantity) => {
+  // Function to combine cart items with the same product
+  const combineCartItems = (cartItemsData) => {
+    const combinedCartItems = [];
+    cartItemsData.forEach(item => {
+      const existingItemIndex = combinedCartItems.findIndex(cartItem => cartItem.product_id === item.product_id);
+      if (existingItemIndex !== -1) {
+        // If item already exists in the combined cart, increase its quantity
+        combinedCartItems[existingItemIndex].quantity += item.quantity;
+      } else {
+        // If item doesn't exist in the combined cart, add it
+        combinedCartItems.push(item);
+      }
+    });
+    return combinedCartItems;
+  };
+
+  // Function to remove item from cart
+  const removeFromCart = async (cartItemId) => {
     try {
-      const response = await fetch(`${API}/cartitems/${productId}`, {
-        method: 'PUT',
+      const response = await fetch(`${API}/cartitems/${cartItemId}`, {
+        method: 'DELETE',
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ quantity }),
       });
       if (response.ok) {
-        const updatedCartItems = cartItems.map(item => {
-          if (item.productId === productId) {
-            return { ...item, quantity: quantity };
-          }
-          return item;
-        });
-        setCartItems(updatedCartItems);
-        localStorage.setItem('cart', JSON.stringify(updatedCartItems));
-        const price = updatedCartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-        setTotalPrice(price);
-      } else {
-        console.error('Failed to update quantity');
-      }
-    } catch (error) {
-      console.error('Error updating quantity:', error);
-    }
-  };
-
-  // Function to remove an item from the cart
-  const removeItem = async (productId) => {
-    try {
-      const response = await fetch(`${API}/cartitems/${productId}`, {
-        method: 'DELETE',
-      });
-      if (response.ok) {
-        const updatedCartItems = cartItems.filter(item => item.productId !== productId);
-        setCartItems(updatedCartItems);
-        localStorage.setItem('cart', JSON.stringify(updatedCartItems));
-        const price = updatedCartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-        setTotalPrice(price);
+        // Remove the deleted item from the products state
+        const updatedProducts = products.filter(product => product.product_id !== cartItemId);
+        setProducts(updatedProducts);
       } else {
         console.error('Failed to remove item from cart');
       }
@@ -65,33 +66,31 @@ const Cart = () => {
     }
   };
 
-  // Function to proceed to checkout
-  const handleCheckout = () => {
-    // Implement checkout process
+  // Function to calculate total price
+  const calculateTotal = () => {
+    return products.reduce((total, item) => total + (item.quantity * item.price), 0);
   };
 
   return (
     <div>
       <h2>Shopping Cart</h2>
-      <ul>
-        {cartItems.map(item => (
-          <li key={item.productId}>
-            <div>{item.productName}</div>
-            <div>Quantity: 
-              <input
-                type="number"
-                min="1"
-                value={item.quantity}
-                onChange={(e) => updateQuantity(item.productId, parseInt(e.target.value))}
-              />
+      {products.length === 0 ? (
+        <p>Your cart is empty</p>
+      ) : (
+        <div>
+          {products.map(product => (
+            <div key={product.product_id}>
+              <img src={product.image_url} alt={product.character_name} style={{ maxWidth: '100px', maxHeight: '100px' }} />
+              <p>Name: {product.character_name}</p>
+              <p>Quantity: {product.quantity}</p>
+              <p>Price: {product.price}</p>
+              <button onClick={() => removeFromCart(product.product_id)}>Remove</button>
             </div>
-            <div>Price: ${item.price * item.quantity}</div>
-            <button onClick={() => removeItem(item.productId)}>Remove</button>
-          </li>
-        ))}
-      </ul>
-      <div>Total Price: ${totalPrice}</div>
-      <button onClick={handleCheckout}>Proceed to Checkout</button>
+          ))}
+          <p>Total: {calculateTotal()}</p>
+          <button>Checkout</button>
+        </div>
+      )}
     </div>
   );
 };

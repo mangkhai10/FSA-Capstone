@@ -50,7 +50,7 @@ const createTables = async () => {
 
     -- Create cart_items table
     CREATE TABLE cart_items (
-      cart_item_id SERIAL PRIMARY KEY,
+      cart_id SERIAL PRIMARY KEY,
       user_id UUID REFERENCES users(id),
       product_id INT REFERENCES products(product_id),
       quantity INT NOT NULL,
@@ -174,7 +174,6 @@ const fetchCartItems = async () => {
   return response.rows;
 };
 
-
 const fetchOrderItems = async (user_id) => {
   const SQL = `
     SELECT * FROM order_items WHERE user_id = $1
@@ -199,11 +198,11 @@ const deleteProduct = async (productId) => {
   return response.rows[0];
 };
 
-const deleteCartItem = async (cartItemId) => {
+const deleteCartItem = async (cart_id) => {
   const SQL = `
-    DELETE FROM cart_items WHERE cart_item_id = $1
+    DELETE FROM cart_items WHERE cart_id = $1
   `;
-  await client.query(SQL, [cartItemId]);
+  await client.query(SQL, [cart_id]);
 };
 
 
