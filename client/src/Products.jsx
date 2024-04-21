@@ -9,6 +9,7 @@ const Products = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [quantityMap, setQuantityMap] = useState({});
+  
 
 
   const fetchProducts = async () => {
@@ -45,6 +46,7 @@ const Products = () => {
       const quantityToAdd = quantityMap[productId];
       const product = products.find(product => product.product_id === productId);
       const price = product.price;
+
       const response = await fetch(`${API}/cartitems`, {
         method: 'POST',
         headers: {

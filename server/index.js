@@ -42,6 +42,7 @@ const isLoggedIn = async (req, res, next) => {
       next(ex);
     }
   };
+
 // Middleware to check if the user has admin role
 const isAdmin = async (req, res, next) => {
   try {
@@ -177,6 +178,7 @@ const isAdmin = async (req, res, next) => {
   });
   
   
+  
   // Product endpoints
   app.post('/api/products', async (req, res, next) => {
     try {
@@ -209,78 +211,42 @@ app.post('/api/products/:productId ', async (req, res, next) => {
     }
   });
 
-
-  // Cart Item endpoints
-// Add cart item endpoint (for both authenticated and non-authenticated users)
+ // Cart Item endpoints
 app.post('/api/cartitems', async (req, res, next) => {
   try {
-    let user_id = null;
-    if (req.headers.authorization) {
-      // User is authenticated
-      const user = await findUserByToken(req.headers.authorization);
-      user_id = user.id;
-    }
-    // Include user_id in cart item if user is authenticated
-    const cartItem = { ...req.body, user_id };
-    const addedCartItem = await createCartItem(cartItem);
-    res.status(201).send(addedCartItem);
+    res.status(201).send(await createCartItem(req.body));
   } catch (ex) {
     next(ex);
   }
 });
 
-
-// Get cart items endpoint (for both authenticated and non-authenticated users)
 app.get('/api/cartitems', async (req, res, next) => {
   try {
-    let user_id = null;
-    if (req.headers.authorization) {
-      // User is authenticated
-      const user = await findUserByToken(req.headers.authorization);
-      user_id = user.id;
-    }
-    const cartItems = await fetchCartItems(user_id);
-    res.send(cartItems);
+    res.send(await fetchCartItems());
   } catch (ex) {
     next(ex);
   }
 });
 
-// Update cart item endpoint (for both authenticated and non-authenticated users)
-app.put('/api/cartitems/:cartItemId', async (req, res, next) => {
+app.put('/api/cartitems/:productId', async (req, res, next) => {
   try {
-    let user_id = null;
-    if (req.headers.authorization) {
-      // User is authenticated
-      const user = await findUserByToken(req.headers.authorization);
-      user_id = user.id;
-    }
-    // Include user_id in cart item if user is authenticated
-    const cartItem = { ...req.body, user_id };
-    const updatedCartItem = await updateCartItem(req.params.cartItemId, cartItem);
-    res.send(updatedCartItem);
+    res.send(await fetchCartItems(req.body));
   } catch (ex) {
     next(ex);
   }
 });
 
-// Delete cart item endpoint (for both authenticated and non-authenticated users)
-app.delete('/api/cartitems/:cartItemId', async (req, res, next) => {
+app.delete('/api/cartitems/:productId', async (req, res, next) => {
   try {
-    let user_id = null;
-    if (req.headers.authorization) {
-      // User is authenticated
-      const user = await findUserByToken(req.headers.authorization);
-      user_id = user.id;
-    }
-    // Delete the cart item based on the cartItemId and user_id
-    await deleteCartItem(req.params.cartItemId, user_id);
-    // Respond with 204 No Content if the deletion is successful
+    await deleteCartItem(req.params.productId);
     res.sendStatus(204);
   } catch (ex) {
     next(ex);
   }
 });
+
+
+
 
   // Order Item endpoints
   app.post('/api/orderitems', isLoggedIn, async (req, res, next) => {

@@ -7,7 +7,7 @@ const SingleProduct = () => {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  
+  const [price, setPrice] = useState(null); 
 
   useEffect(() => {
     const fetchSingleProduct = async () => {
@@ -20,6 +20,7 @@ const SingleProduct = () => {
         });
         const productData = await response.json();
         setProduct(productData);
+        setPrice(productData.price);
       } catch (error) {
         console.error('Error fetching single product:', error);
       }
@@ -37,7 +38,8 @@ const SingleProduct = () => {
         },
         body: JSON.stringify({
           product_id: productId,
-          quantity: quantity
+          quantity: quantity,
+          price: price // Include the price in the request body
         })
       });
   

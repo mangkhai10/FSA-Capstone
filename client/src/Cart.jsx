@@ -7,35 +7,48 @@ const Cart = () => {
 
   useEffect(() => {
     const fetchCartItems = async () => {
-        try {
-          const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage
-          const headers = {
-            "Content-Type": "application/json",
-          };
-          if (token) {
-            headers["Authorization"] = `Bearer ${token}`;
-          }
-          const response = await fetch(`${API}/cartitems`, {
-            method: 'GET',
-            headers: headers
-          });
-          if (response.ok) {
-            const cartItemsData = await response.json();
-            console.log('Cart items data:', cartItemsData); // Log the fetched cart items
-            setCartItems(cartItemsData);
-          } else {
-            console.error('Failed to fetch cart items');
-          }
-        } catch (error) {
-          console.error('Error fetching cart items:', error);
+      try {
+        const token = localStorage.getItem('token');
+        const headers = {
+          "Content-Type": "application/json",
+        };
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
         }
-      };
-      
-      
-  
+        const response = await fetch(`${API}/cartitems`, {
+          method: 'GET',
+          headers: headers
+        });
+        if (response.ok) {
+          const cartItemsData = await response.json();
+          // Combine cart items with the same product
+          const combinedCartItems = combineCartItems(cartItemsData);
+          setCartItems(combinedCartItems);
+        } else {
+          console.error('Failed to fetch cart items');
+        }
+      } catch (error) {
+        console.error('Error fetching cart items:', error);
+      }
+    };
     fetchCartItems();
   }, []);
-  
+
+  // Function to combine cart items with the same product
+  const combineCartItems = (cartItemsData) => {
+    const combinedCartItems = [];
+    cartItemsData.forEach(item => {
+      const existingItemIndex = combinedCartItems.findIndex(cartItem => cartItem.product_id === item.product_id);
+      if (existingItemIndex !== -1) {
+        // If item already exists in the combined cart, increase its quantity
+        combinedCartItems[existingItemIndex].quantity += item.quantity;
+      } else {
+        // If item doesn't exist in the combined cart, add it
+        combinedCartItems.push(item);
+      }
+    });
+    return combinedCartItems;
+  };
 
   // Function to remove item from cart
   const removeFromCart = async (productId) => {
@@ -70,13 +83,13 @@ const Cart = () => {
         <p>Your cart is empty</p>
       ) : (
         <div>
-          {cartItems.map(cartItems => (
-            <div key={cartItems.product_id}>
-              <p>Name: {cartItems.character_name}</p>
-              <p>Quantity: {cartItems.quantity}</p>
-              <p>Price: {cartItems.price}</p>
-              <p>Total: {cartItems.quantity * cartItems.price}</p>
-              <button onClick={() => removeFromCart(cartItems.product_id)}>Remove</button>
+          {cartItems.map(cartItem => (
+            <div key={cartItem.cartItemId}>
+              <img src={cartItem.image_url} alt={cartItem.name} style={{ maxWidth: '100px', maxHeight: '100px' }} />
+              <p>Name: {cartItem.name}</p>
+              <p>Quantity: {cartItem.quantity}</p>
+              <p>Price: {cartItem.price}</p>
+              <button onClick={() => removeFromCart(cartItem.product_id)}>Remove</button>
             </div>
           ))}
           <p>Total: {calculateTotal()}</p>
