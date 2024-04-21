@@ -5,6 +5,7 @@ import Register from './Register';
 import Products from './Products';
 import Login from './Login';
 import Account from './Account';
+import SingleProduct from './SingleProduct'; 
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
@@ -15,6 +16,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Products />} />
         <Route path="/products" element={<Products />} />
+        <Route path="/product/:productId" element={<SingleProduct/>} /> 
         <Route path="/register" element={<Register setToken={setToken} />} />
         <Route path="/login" element={<Login token={token} setToken={setToken}/>} />
         <Route path="/account" element={<Account token={token} setToken={setToken} />} />
