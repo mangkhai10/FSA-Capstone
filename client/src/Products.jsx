@@ -45,7 +45,6 @@ const Products = () => {
       const quantityToAdd = quantityMap[productId];
       const product = products.find(product => product.product_id === productId);
       const price = product.price;
-      const total = price * quantityToAdd;
       const response = await fetch(`${API}/cartitems`, {
         method: 'POST',
         headers: {
@@ -54,8 +53,7 @@ const Products = () => {
         body: JSON.stringify({
           product_id: productId,
           quantity: quantityToAdd,
-          price: price,
-          total: total
+          price: price
         })
       });
   
