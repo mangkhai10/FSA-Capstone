@@ -65,7 +65,7 @@ const SingleProduct = ({ productId }) => {
       <h2>Product Details</h2>
       <div>
         <img src={product.image_url} alt={product.name} />
-        <div>Name: {product.name}</div>
+        <div>Name: {product.character_name}</div>
         <div>Series: {product.series}</div>
         <div>Price: {product.price}</div>
         <div>Stock Quantity: {product.stock_quantity}</div>

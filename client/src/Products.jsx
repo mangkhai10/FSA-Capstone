@@ -75,7 +75,7 @@ const Products = () => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
     const filtered = products.filter(product =>
-      product.name.toLowerCase().includes(query) ||
+      product.character_name.toLowerCase().includes(query) ||
       product.category.toLowerCase().includes(query)
     );
     setFilteredProducts(filtered);
@@ -116,10 +116,10 @@ const Products = () => {
         {filteredProducts.map(product => (
           <li key={product.product_id}>
             <Link to={`/product/${product.product_id}`}>
-              <img src={product.image_url} alt={product.name} style={{ maxWidth: '100px', maxHeight: '100px' }} />
+              <img src={product.image_url} alt={product.character_name} style={{ maxWidth: '100px', maxHeight: '100px' }} />
             
             {/* Display other product details */}
-            <div>Name: {product.name}</div>
+            <div>Name: {product.character_name}</div>
             </Link>
             <div>Series: {product.series}</div>
             <div>Price: {product.price}</div>

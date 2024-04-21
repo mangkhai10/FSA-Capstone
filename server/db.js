@@ -39,7 +39,7 @@ const createTables = async () => {
     -- Create products table
     CREATE TABLE products (
       product_id SERIAL PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
+      character_name VARCHAR(255) NOT NULL,
       description TEXT,
       price DECIMAL(10, 2) NOT NULL,
       stock_quantity INT NOT NULL,
@@ -101,9 +101,9 @@ const updateUser = async (userId, { address, payment_method }) => {
 
 const createProduct = async ({ name, description, price, stock_quantity, category, image_url ,series}) => {
   const SQL = `
-    INSERT INTO products (name, description, price, stock_quantity, category, image_url, series) VALUES ($1, $2, $3, $4, $5, $6,$7) RETURNING *
+    INSERT INTO products (character_name, description, price, stock_quantity, category, image_url, series) VALUES ($1, $2, $3, $4, $5, $6,$7) RETURNING *
   `;
-  const response = await client.query(SQL, [name, description, price, stock_quantity, category, image_url, series]);
+  const response = await client.query(SQL, [character_name, description, price, stock_quantity, category, image_url, series]);
   return response.rows[0];
 };
 
@@ -130,11 +130,11 @@ const createOrderDetail = async ({ user_id, total_amount, status }) => {
   const response = await client.query(SQL, [user_id, total_amount, status]);
   return response.rows[0];
 };
-const createSingleProduct = async (productId, productData) => {
+const createSingleProduct = async (productId) => {
   const SQL = `
-    INSERT INTO products (product_id, name, description, price, stock_quantity, category, image_url, series) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *
+    INSERT INTO products (product_id, character_name, description, price, stock_quantity, category, image_url, series) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *
   `;
-  const response = await client.query(SQL, [productId, productData.name, productData.description, productData.price, productData.stock_quantity, productData.category, productData.image_url, productData.series]);
+  const response = await client.query(SQL, [productId, character_name, description, price, stock_quantity, category, image_url, series]);
   return response.rows[0];
 };
 
