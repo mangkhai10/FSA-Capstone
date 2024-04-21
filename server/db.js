@@ -197,7 +197,7 @@ const findUserByToken = async (token) => {
     throw error;
   }
   const SQL = `
-    SELECT id, email FROM users WHERE id=$1;
+    SELECT id, first_name, last_name, email, address, payment_method FROM users WHERE id=$1;
   `;
   const response = await client.query(SQL, [id]);
   if (!response.rows.length) {

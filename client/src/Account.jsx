@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const API = "https://fsa-capstone.onrender.com/api/auth";
 
 const Account = ({ token }) => {
+  const [userData, setUserData] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const history = useNavigate();
 
@@ -23,6 +24,8 @@ const Account = ({ token }) => {
         if (!response.ok) {
           throw new Error('Failed to fetch user data');
         }
+        const userData = await response.json();
+        setUserData(userData);
       } catch (error) {
         console.error('Error fetching user data:', error);
         setErrorMessage('Failed to fetch user data. Please try again later.');
@@ -32,8 +35,10 @@ const Account = ({ token }) => {
 
   const logout = () => {
     window.localStorage.removeItem('token');
-    window.location.reload(history('/products'));
+    history('/products');
+    window.location.reload();
   };
+
   return (
     <div className="account-container">
       <div className="navigation-item">
@@ -43,6 +48,13 @@ const Account = ({ token }) => {
       </div>
       <h2 className="account-heading">Account Information</h2>
       {errorMessage && <p className="error">{errorMessage}</p>}
+      {userData && (
+        <div>
+          <p>First Name: {userData.first_name}</p>
+          <p>Email: {userData.email}</p>
+          {/* Render other user data as needed */}
+        </div>
+      )}
     </div>
   );
 };
