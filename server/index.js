@@ -108,6 +108,14 @@ const isAdmin = async (req, res, next) => {
     }
   });
 
+  app.get('/api/users/:userId', async (req, res, next) => {
+    try {
+      res.send(await fetchUser(req.params.userId));
+    } catch (ex) {
+      next(ex);
+    }
+  });
+
 
   // Admin endpoints
   

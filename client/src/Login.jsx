@@ -12,7 +12,6 @@ const Login = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const history = useNavigate();
 
-
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
@@ -36,10 +35,10 @@ const Login = () => {
     localStorage.setItem('token', data.token);
       console.log('Logged in successfully');
       setSuccessMessage('Logged in successfully');
-      history('/account');
+      window.location.reload(history('/products'));
     } catch (error) {
-      console.error('Error logging in:', error);
-      setErrorMessage("Failed to log in");
+      console.error('Failed to log in', error);
+      setErrorMessage('User doesnt exist');
     }
   };
 
