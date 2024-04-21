@@ -130,13 +130,14 @@ const createOrderDetail = async ({ user_id, total_amount, status }) => {
   const response = await client.query(SQL, [user_id, total_amount, status]);
   return response.rows[0];
 };
-const createSingleProduct = async ({ name, description, price, stock_quantity, category, image_url ,series}) => {
+const createSingleProduct = async (productId, productData) => {
   const SQL = `
-    INSERT INTO products (name, description, price, stock_quantity, category, image_url, series) VALUES ($1, $2, $3, $4, $5, $6,$7) RETURNING *
+    INSERT INTO products (product_id, name, description, price, stock_quantity, category, image_url, series) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *
   `;
-  const response = await client.query(SQL, [name, description, price, stock_quantity, category, image_url, series]);
+  const response = await client.query(SQL, [productId, productData.name, productData.description, productData.price, productData.stock_quantity, productData.category, productData.image_url, productData.series]);
   return response.rows[0];
-}
+};
+
 
 const fetchSingleProduct = async (productId) => {
   const SQL = `
