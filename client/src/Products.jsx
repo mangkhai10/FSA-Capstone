@@ -43,6 +43,8 @@ const Products = () => {
   const handleAddToCart = async (productId) => {
     try {
       const quantityToAdd = quantityMap[productId];
+      const product = products.find(product => product.product_id === productId);
+      const price = product.price;
       const response = await fetch(`${API}/cartitems`, {
         method: 'POST',
         headers: {
@@ -50,16 +52,17 @@ const Products = () => {
         },
         body: JSON.stringify({
           product_id: productId,
-          quantity: quantityToAdd
+          quantity: quantityToAdd,
+          price: price
         })
       });
-
+  
       if (response.ok) {
-        const updatedProducts = products.map(product => {
-          if (product.product_id === productId) {
-            return { ...product, stock_quantity: product.stock_quantity - quantityToAdd };
+        const updatedProducts = products.map(prod => {
+          if (prod.product_id === productId) {
+            return { ...prod, stock_quantity: prod.stock_quantity - quantityToAdd };
           }
-          return product;
+          return prod;
         });
         setProducts(updatedProducts);
         setFilteredProducts(updatedProducts);
@@ -70,6 +73,7 @@ const Products = () => {
       console.error('Error adding to cart:', error);
     }
   };
+  
 
   const handleSearch = (event) => {
     const query = event.target.value.toLowerCase();

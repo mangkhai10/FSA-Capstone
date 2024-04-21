@@ -70,13 +70,13 @@ const Cart = () => {
         <p>Your cart is empty</p>
       ) : (
         <div>
-          {cartItems.map(item => (
-            <div key={item.product_id}>
-              <p>Name: {item.character_name}</p>
-              <p>Quantity: {item.quantity}</p>
-              <p>Price: {item.price}</p>
-              <p>Total: {item.quantity * item.price}</p>
-              <button onClick={() => removeFromCart(item.product_id)}>Remove</button>
+          {cartItems.map(cartItems => (
+            <div key={cartItems.product_id}>
+              <p>Name: {cartItems.character_name}</p>
+              <p>Quantity: {cartItems.quantity}</p>
+              <p>Price: {cartItems.price}</p>
+              <p>Total: {cartItems.quantity * cartItems.price}</p>
+              <button onClick={() => removeFromCart(cartItems.product_id)}>Remove</button>
             </div>
           ))}
           <p>Total: {calculateTotal()}</p>
