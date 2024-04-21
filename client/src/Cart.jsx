@@ -46,9 +46,9 @@ const Cart = () => {
   };
 
   // Function to remove item from cart
-  const removeFromCart = async (cartItemId) => {
+  const removeFromCart = async (cart_id) => {
     try {
-      const response = await fetch(`${API}/cartitems/${cartItemId}`, {
+      const response = await fetch(`${API}/cartitems/${cart_id}`, {
         method: 'DELETE',
         headers: {
           "Content-Type": "application/json",
@@ -56,7 +56,7 @@ const Cart = () => {
       });
       if (response.ok) {
         // Remove the deleted item from the products state
-        const updatedProducts = products.filter(product => product.product_id !== cartItemId);
+        const updatedProducts = products.filter(product => product.product_id !== cart_id);
         setProducts(updatedProducts);
       } else {
         console.error('Failed to remove item from cart');

@@ -238,14 +238,12 @@ app.put('/api/cartitems/:cart_id', async (req, res, next) => {
 
 app.delete('/api/cartitems/:cart_id', async (req, res, next) => {
   try {
-    await deleteCartItem({cart_id: req.params.cart_id});
+    await deleteCartItem(parseInt(req.params.cart_id));
     res.sendStatus(204);
   } catch (ex) {
     next(ex);
   }
 });
-
-
 
 
   // Order Item endpoints
