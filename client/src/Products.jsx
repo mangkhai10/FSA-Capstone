@@ -85,7 +85,7 @@ const Products = () => {
 
   return (
     <div>
-      <h1>Product List</h1>
+      <h1>Welcome to Anime Figure Store</h1>
       <input
         type="text"
         placeholder="Search by name/category..."
@@ -106,10 +106,11 @@ const Products = () => {
 
             {/* Display other product details */}
             <div>Name: {product.name}</div>
-            <div>Description: {product.description}</div>
+            <div>Series: {product.series}</div>
             <div>Price: {product.price}</div>
             <div>Stock Quantity: {product.stock_quantity}</div>
             <div>Category: {product.category}</div>
+            <div>Description: {product.description}</div>
             
             {/* Quantity input and Add to Cart button */}
             <input
