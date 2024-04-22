@@ -1,16 +1,9 @@
 // Import necessary functions from the database module
-const { createUser, createAdminUser, createProduct } = require("./db");
+const { createUser, createProduct } = require("./db");
 
 // Function to initialize dummy data
 const SampleData = async () => {
   try {
-    // Create sample admin user
-    const adminUser = await createAdminUser({
-      username: "admin",
-      password: "admin123",
-      is_admin: true
-    });
-
     // Create sample users
     const users = await Promise.all([
       createUser({

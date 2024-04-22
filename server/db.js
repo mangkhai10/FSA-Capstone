@@ -10,20 +10,10 @@ const JWT = process.env.JWT || "shhh";
 const createTables = async () => {
   const SQL = `
     -- Drop existing tables if they exist
-    DROP TABLE IF EXISTS adminuser;
     DROP TABLE IF EXISTS users CASCADE;
     DROP TABLE IF EXISTS products CASCADE;
     DROP TABLE IF EXISTS cart_items ;
-    DROP TABLE IF EXISTS order_items ;
-    DROP TABLE IF EXISTS order_details ;
-
-    -- Create adminuser table
-    CREATE TABLE adminuser (
-      adminuser_id SERIAL PRIMARY KEY,
-      username VARCHAR(50) UNIQUE NOT NULL,
-      password VARCHAR(255) NOT NULL,
-      is_admin BOOLEAN DEFAULT FALSE
-    );
+    DROP TABLE IF EXISTS orders ;
 
     -- Create users table
     CREATE TABLE users (
@@ -57,33 +47,19 @@ const createTables = async () => {
       price DECIMAL(10, 2) NOT NULL
     );
 
-    -- Create order_items table
-    CREATE TABLE order_items (
-      order_item_id SERIAL PRIMARY KEY,
-      user_id UUID REFERENCES users(id),
-      product_id INT REFERENCES products(product_id),
-      order_place TIMESTAMP NOT NULL,
-      total DECIMAL(10, 2) NOT NULL
-    );
-
-    -- Create order_details table
-    CREATE TABLE order_details (
-      order_detail_id SERIAL PRIMARY KEY,
+    CREATE TABLE orders (
+      order_id SERIAL PRIMARY KEY,
       user_id UUID REFERENCES users(id),
       total_amount DECIMAL(10, 2) NOT NULL,
-      status VARCHAR(20) DEFAULT 'pending'
+      status VARCHAR(20) DEFAULT 'pending',
+      address VARCHAR(100) NOT NULL,
+      payment_method VARCHAR(100) NOT NULL,
+      order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
+    
   `;
   // Execute the SQL query to create tables
   await client.query(SQL);
-};
-
-const createAdminUser = async ({ username, password, is_admin }) => {
-  const SQL = `
-    INSERT INTO adminuser (username, password, is_admin) VALUES ($1, $2, $3) RETURNING *
-  `;
-  const response = await client.query(SQL, [username, await bcrypt.hash(password, 5), is_admin]);
-  return response.rows[0];
 };
 
 const createUser = async ({ first_name, last_name, email, password, address, payment_method }) => {
@@ -117,21 +93,7 @@ const createCartItem = async ({ user_id, product_id, quantity, price }) => {
   return response.rows[0];
 };
 
-const createOrderItem = async ({ user_id, product_id, quantity, order_place, total }) => {
-  const SQL = `
-    INSERT INTO order_items (user_id, product_id, quantity, order_place, total) VALUES ($1, $2, $3,$4, $5) RETURNING *
-  `;
-  const response = await client.query(SQL, [user_id, product_id, quantity, order_place, total]);
-  return response.rows[0];
-};
 
-const createOrderDetail = async ({ user_id, total_amount, status }) => {
-  const SQL = `
-    INSERT INTO order_details (user_id, total_amount, status) VALUES ($1, $2, $3) RETURNING *
-  `;
-  const response = await client.query(SQL, [user_id, total_amount, status]);
-  return response.rows[0];
-};
 const createSingleProduct = async (product_id, character_name, description, price, stock_quantity, category, image_url, series) => {
   const SQL = `
     INSERT INTO products (product_id, character_name, description, price, stock_quantity, category, image_url, series) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *
@@ -174,22 +136,6 @@ const fetchCartItems = async () => {
   return response.rows;
 };
 
-const fetchOrderItems = async (user_id) => {
-  const SQL = `
-    SELECT * FROM order_items WHERE user_id = $1
-  `;
-  const response = await client.query(SQL, [user_id]);
-  return response.rows;
-};
-
-const fetchOrderDetails = async (user_id) => {
-  const SQL = `
-    SELECT * FROM order_details WHERE user_id = $1
-  `;
-  const response = await client.query(SQL, [user_id]);
-  return response.rows;
-};
-
 const deleteProduct = async (productId) => {
   const SQL = `
     DELETE FROM products WHERE product_id = $1 RETURNING *
@@ -203,6 +149,14 @@ const deleteCartItem = async (cart_id) => {
     DELETE FROM cart_items WHERE cart_id = $1
   `;
   await client.query(SQL, [cart_id]);
+};
+
+const createOrder = async ({ user_id, total_amount, address, payment_method }) => {
+  const SQL = `
+    INSERT INTO orders (user_id, total_amount, address, payment_method) VALUES ($1, $2, $3, $4) RETURNING *
+  `;
+  const response = await client.query(SQL, [user_id, total_amount, address, payment_method]);
+  return response.rows[0];
 };
 
 
@@ -247,24 +201,19 @@ const authenticate = async ({ email, password }) => {
 
 module.exports = {
   client,
-  createAdminUser,
   createTables,
-  createAdminUser,
   createUser,
   updateUser,
   createProduct,
   createCartItem,
-  createOrderItem,
-  createOrderDetail,
   fetchUsers,
   fetchProducts,
   fetchCartItems,
-  fetchOrderItems,
-  fetchOrderDetails,
   deleteProduct,
   deleteCartItem,
   findUserByToken,
   authenticate,
   createSingleProduct,
   fetchSingleProduct,
+  createOrder,
 };

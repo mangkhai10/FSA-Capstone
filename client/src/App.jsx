@@ -7,6 +7,7 @@ import Login from './Login';
 import Account from './Account';
 import SingleProduct from './SingleProduct'; 
 import Cart from './Cart';
+import Checkout from './checkout';
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
@@ -19,6 +20,7 @@ function App() {
         <Route path="/products" element={<Products />} />
         <Route path="/product/:productId" element={<SingleProduct/>} /> 
         <Route path="/cart" element={<Cart/>} /> 
+        <Route path="/checkout" element={<Checkout token={token} setToken={setToken} />} />
         <Route path="/register" element={<Register setToken={setToken} />} />
         <Route path="/login" element={<Login token={token} setToken={setToken}/>} />
         <Route path="/account" element={<Account token={token} setToken={setToken} />} />

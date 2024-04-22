@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; // Import Link component
 
 const API = "https://fsa-capstone.onrender.com/api";
 
@@ -16,7 +17,6 @@ const Cart = () => {
         });
         if (response.ok) {
           const cartItemsData = await response.json();
-          // Combine cart items with the same product
           const combinedCartItems = combineCartItems(cartItemsData);
           setProducts(combinedCartItems);
         } else {
@@ -29,23 +29,19 @@ const Cart = () => {
     fetchCartItems();
   }, []);
 
-  // Function to combine cart items with the same product
   const combineCartItems = (cartItemsData) => {
     const combinedCartItems = [];
     cartItemsData.forEach(item => {
       const existingItemIndex = combinedCartItems.findIndex(cartItem => cartItem.product_id === item.product_id);
       if (existingItemIndex !== -1) {
-        // If item already exists in the combined cart, increase its quantity
         combinedCartItems[existingItemIndex].quantity += item.quantity;
       } else {
-        // If item doesn't exist in the combined cart, add it
         combinedCartItems.push(item);
       }
     });
     return combinedCartItems;
   };
 
-  // Function to remove item from cart
   const removeFromCart = async (cart_id) => {
     try {
       const response = await fetch(`${API}/cartitems/${cart_id}`, {
@@ -55,7 +51,6 @@ const Cart = () => {
         },
       });
       if (response.ok) {
-        // Remove the deleted item from the products state
         const updatedProducts = products.filter(product => product.product_id !== cart_id);
         setProducts(updatedProducts);
       } else {
@@ -66,9 +61,8 @@ const Cart = () => {
     }
   };
 
-  // Function to calculate total price
   const calculateTotal = () => {
-    return products.reduce((total, item) => total + (item.quantity * item.price), 0);
+    return products.reduce((total, item) => total + (item.quantity * item.price), 0).toFixed(2);
   };
 
   return (
@@ -88,7 +82,9 @@ const Cart = () => {
             </div>
           ))}
           <p>Total: {calculateTotal()}</p>
-          <button>Checkout</button>
+          <Link to={`/checkout`}>
+            <button>Checkout</button>
+          </Link>
         </div>
       )}
     </div>

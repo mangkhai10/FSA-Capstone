@@ -1,24 +1,21 @@
 // Import necessary modules and set up the Express app
 const {
     client,
-    createAdminUser,
     createTables,
     createUser,
     updateUser,
     createProduct,
     createCartItem,
-    createOrderItem,
-    createOrderDetail,
     fetchUsers,
     fetchProducts,
     fetchCartItems,
-    fetchOrderItems,
     deleteProduct,
     deleteCartItem,
     findUserByToken,
     authenticate,
     createSingleProduct,
-    fetchSingleProduct
+    fetchSingleProduct,
+    createOrder
   } = require('./db');
   const express = require('express');
   const app = express();
@@ -43,20 +40,6 @@ const isLoggedIn = async (req, res, next) => {
     }
   };
 
-// Middleware to check if the user has admin role
-const isAdmin = async (req, res, next) => {
-  try {
-    const user = await findUserByToken(req.headers.authorization);
-    if (user.role === 'admin') {
-      next();
-    } else {
-      res.status(403).send('Forbidden');
-    }
-  } catch (ex) {
-    next(ex);
-  }
-};
-  
   // Authentication endpoints
   app.post('/api/auth/register', async (req, res, next) => {
     try {
@@ -127,58 +110,6 @@ const isAdmin = async (req, res, next) => {
     }
   });
 
-  // Admin endpoints
-  
-  
-  app.put('/api/admin/users', isAdmin, async (req, res, next) => {
-    try {
-      res.send(await fetchUser(req.params.userId));
-    } catch (ex) {
-      next(ex);
-    }
-  });
-  
-  app.put('/api/admin/users/:userId', isAdmin, async (req, res, next) => {
-    try {
-      res.send(await fetchUser(req.params.userId));
-    } catch (ex) {
-      next(ex);
-    }
-  });
-  
-  app.get('/api/admin/products', isAdmin, async (req, res, next) => {
-    try {
-      res.send(await fetchProducts());
-    } catch (ex) {
-      next(ex);
-    }
-  });
-  app.post('/api/admin/products', isAdmin, async (req,res, next) => {
-    try {
-      res.send(await createProduct(req.body));
-    } catch (ex) {
-      next(ex);
-    }
-  });
-  
-  app.put('/api/admin/products/:productId', isAdmin, async (req,res, next) => {
-    try {
-      res.send(await fetchProduct(req.params.productId, req.body));
-    } catch (ex) {
-      next(ex);
-    }
-  });
-  
-  app.delete('/api/admin/products/:productId', isAdmin, async (req,res, next) => {
-    try {
-      res.send(await deleteProduct(req.params.productId));
-    } catch (ex) {
-      next(ex);
-    }
-  });
-  
-  
-  
   // Product endpoints
   app.post('/api/products', async (req, res, next) => {
     try {
@@ -245,54 +176,21 @@ app.delete('/api/cartitems/:cart_id', async (req, res, next) => {
     next(ex);
   }
 });
-
-
-
-  // Order Item endpoints
-  app.post('/api/orderitems', isLoggedIn, async (req, res, next) => {
-    try {
-      res.status(201).send(await createOrderItem(req.body));
-    } catch (ex) {
-      next(ex);
-    }
-  });
   
-  app.get('/api/orderitems', isLoggedIn, async (req, res, next) => {
-    try {
-      res.send(await fetchOrderItems());
-    } catch (ex) {
-      next(ex);
-    }
-  });
-  
-  // Order Item Detail endpoints
-  app.post('/api/orderitems/:orderId/orderdetails', isLoggedIn, async (req, res, next) => {
-    try {
-      res.status(201).send(await createOrderDetail(req.body));
-    } catch (ex) {
-      next(ex);
-    }
-  });
-  
-  app.get('/api/orderitems/:orderId/orderdetails', isLoggedIn, async (req, res, next) => {
-    try {
-      res.send(await fetchOrderDetails(req.params.orderId));
-    } catch (ex) {
-      next(ex);
-    }
-  });
-  
-  // Route to checkout and place an order
+  // Endpoint to initiate the checkout process
   app.post('/api/checkout', isLoggedIn, async (req, res, next) => {
     try {
-      const { address, paymentMethod } = req.body;
-      const order = await checkout(req.user.id, address, paymentMethod);
+      const { total_amount, address, payment_method } = req.body;
+      // Get user ID from the logged-in user
+      const user_id = req.user.id;
+      // Create the order
+      const order = await createOrder({ user_id, total_amount, address, payment_method });
+      // You can perform additional actions here such as updating product quantities, sending confirmation emails, etc.
       res.status(201).json(order);
     } catch (error) {
       next(error);
     }
   });
-  
   
   // Error handling middleware
   app.use((err, req, res, next) => {
