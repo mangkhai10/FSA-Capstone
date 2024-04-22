@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
+const API = "https://fsa-capstone.onrender.com/api";
+
 const Checkout = () => {
   // State for user details and payment method
   const [userDetails, setUserDetails] = useState({});
   const [paymentMethod, setPaymentMethod] = useState('');
   const [address, setAddress] = useState('');
+  const [success, setSuccess] = useState('');
 
   useEffect(() => {
     // Fetch user details and payment method
@@ -16,7 +19,7 @@ const Checkout = () => {
   const fetchUserDetails = async () => {
     try {
       // Make API call to fetch user details
-      const response = await fetch('/api/auth/me', {
+      const response = await fetch(`${API}/auth/me`, {
         headers: {
           Authorization: localStorage.getItem('token') // Assuming token is stored in localStorage
         }
@@ -46,7 +49,7 @@ const Checkout = () => {
   const handlePlaceOrder = async () => {
     try {
       // Make API call to place the order
-      const response = await fetch('/api/checkout', {
+      const response = await fetch(`${API}/checkout`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -61,6 +64,7 @@ const Checkout = () => {
       if (response.ok) {
         // Order placed successfully
         console.log('Order placed successfully');
+        setSuccess('Order placed successfully');
         // You can redirect to a confirmation page or display a success message
       } else {
         console.error('Failed to place the order');
@@ -76,23 +80,17 @@ const Checkout = () => {
       <div>
         {/* Display user details */}
         <p>Name: {userDetails.first_name} {userDetails.last_name}</p>
-        <p>Email: {userDetails.email}</p>
-        <p>Address: {address}</p>
+        <p>Address: {userDetails.address}</p>
       </div>
       <div>
         {/* Display product attributes */}
         {/* Implement your logic to display product attributes here */}
       </div>
-      {/* Display payment method */}
-      {paymentMethod ? (
-        <p>Payment method: {paymentMethod}</p>
-      ) : (
-        <button onClick={handleAddPaymentMethod}>Add Payment Method</button>
-      )}
       {/* Display place order button */}
       {paymentMethod && (
         <button onClick={handlePlaceOrder}>Place Order</button>
       )}
+      {success && <p className="success">{success}</p>}
       {/* Link to go back to cart */}
       <Link to="/cart">
         <button>Back to Cart</button>

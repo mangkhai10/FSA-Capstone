@@ -3,10 +3,14 @@ import { Link } from 'react-router-dom'; // Import Link component
 
 const API = "https://fsa-capstone.onrender.com/api";
 
-const Cart = () => {
+const Cart = ({ token }) => {
   const [products, setProducts] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!false); // State to track user authentication status
 
   useEffect(() => {
+    // Check if the user is logged in
+    setIsLoggedIn(!!token);
+    
     const fetchCartItems = async () => {
       try {
         const response = await fetch(`${API}/cartitems`, {
@@ -27,7 +31,7 @@ const Cart = () => {
       }
     };
     fetchCartItems();
-  }, []);
+  }, [token]);
 
   const combineCartItems = (cartItemsData) => {
     const combinedCartItems = [];
@@ -82,9 +86,16 @@ const Cart = () => {
             </div>
           ))}
           <p>Total: {calculateTotal()}</p>
-          <Link to={`/checkout`}>
-            <button>Checkout</button>
-          </Link>
+          {/* Conditionally render the Link based on user authentication status */}
+          {isLoggedIn ? (
+            <Link to="/checkout">
+              <button>Checkout</button>
+            </Link>
+          ) : (
+            <Link to="/register">
+              <button>Register to Checkout</button>
+            </Link>
+          )}
         </div>
       )}
     </div>
