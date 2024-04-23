@@ -37,14 +37,6 @@ const Checkout = () => {
     }
   };
 
-  // Function to handle adding a payment method
-  const handleAddPaymentMethod = () => {
-    // Implement your logic to add a payment method here
-    // This could involve opening a payment method form or redirecting to a payment page
-    // Once payment method is added, update state accordingly
-    setPaymentMethod('Credit Card'); // Example: Setting payment method to 'Credit Card'
-  };
-
   // Function to handle placing the order
   const handlePlaceOrder = async () => {
     try {

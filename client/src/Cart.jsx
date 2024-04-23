@@ -76,15 +76,19 @@ const Cart = ({ token }) => {
         <p>Your cart is empty</p>
       ) : (
         <div>
-          {products.map(product => (
-            <div key={product.product_id}>
-              <img src={product.image_url} alt={product.character_name} style={{ maxWidth: '100px', maxHeight: '100px' }} />
-              <p>Name: {product.character_name}</p>
-              <p>Quantity: {product.quantity}</p>
-              <p>Price: {product.price}</p>
-              <button onClick={() => removeFromCart(product.product_id)}>Remove</button>
-            </div>
-          ))}
+{products.map(product => (
+  <div key={product.product_id}>
+    <Link to={`/product/${product.product_id}`}>
+      <img src={product.image_url} alt={product.character_name} style={{ maxWidth: '100px', maxHeight: '100px' }} />
+    </Link>
+    <div>
+      <p>Name: {product.character_name}</p>
+      <p>Quantity: {product.quantity}</p>
+      <p>Price: {product.price}</p>
+      <button onClick={() => removeFromCart(product.product_id)}>Remove</button>
+    </div>
+  </div>
+))}
           <p>Total: {calculateTotal()}</p>
           {/* Conditionally render the Link based on user authentication status */}
           {isLoggedIn ? (

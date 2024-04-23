@@ -44,9 +44,11 @@ const createTables = async () => {
       user_id UUID REFERENCES users(id),
       product_id INT REFERENCES products(product_id),
       quantity INT NOT NULL,
-      price DECIMAL(10, 2) NOT NULL
+      price DECIMAL(10, 2) NOT NULL,
+      character_name VARCHAR(255),
+      image_url VARCHAR(255)
     );
-
+    
     CREATE TABLE orders (
       order_id SERIAL PRIMARY KEY,
       user_id UUID REFERENCES users(id),
@@ -86,12 +88,18 @@ const createProduct = async ({ character_name, description, price, stock_quantit
 };
 
 const createCartItem = async ({ user_id, product_id, quantity, price }) => {
+  // Fetch character_name and image_url from products table
+  const productInfo = await fetchSingleProduct(product_id);
+  const { character_name, image_url } = productInfo;
+
   const SQL = `
-    INSERT INTO cart_items (user_id, product_id, quantity, price) VALUES ($1, $2, $3, $4) RETURNING *
+    INSERT INTO cart_items (user_id, product_id, quantity, price, character_name, image_url) 
+    VALUES ($1, $2, $3, $4, $5, $6) RETURNING *
   `;
-  const response = await client.query(SQL, [user_id, product_id, quantity, price]);
+  const response = await client.query(SQL, [user_id, product_id, quantity, price, character_name, image_url]);
   return response.rows[0];
 };
+
 
 
 const createSingleProduct = async (product_id, character_name, description, price, stock_quantity, category, image_url, series) => {
