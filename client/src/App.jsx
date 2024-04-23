@@ -7,7 +7,7 @@ import Login from './Login';
 import Account from './Account';
 import SingleProduct from './SingleProduct'; 
 import Cart from './Cart';
-import Checkout from './checkout';
+import Checkout from './CheckOut';
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token") || null);

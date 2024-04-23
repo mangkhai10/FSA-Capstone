@@ -143,13 +143,31 @@ app.post('/api/products/:productId ', async (req, res, next) => {
   });
 
  // Cart Item endpoints
+// Endpoint to add products to the cart
 app.post('/api/cartitems', async (req, res, next) => {
   try {
-    res.status(201).send(await createCartItem(req.body));
+    // Check if user is authenticated
+    if (req.headers.authorization) {
+      // If authenticated, extract user ID from the token
+      const user = await findUserByToken(req.headers.authorization);
+      const user_id = user.id;
+      // Add the product to the cart for the authenticated user
+      const { product_id, quantity, price } = req.body;
+      const cartItem = await createCartItem({ user_id, product_id, quantity, price });
+      res.status(201).send(cartItem);
+    } else {
+      // For non-authenticated users, create a temporary session ID or use some other identifier
+      const session_id = req.sessionID; // Example: Using Express session ID
+      // Add the product to the cart for the non-authenticated user
+      const { product_id, quantity, price } = req.body;
+      const cartItem = await createCartItem({ session_id, product_id, quantity, price });
+      res.status(201).send(cartItem);
+    }
   } catch (ex) {
     next(ex);
   }
 });
+
 
 app.get('/api/cartitems', async (req, res, next) => {
   try {

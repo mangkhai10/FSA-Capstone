@@ -55,7 +55,7 @@ const Cart = ({ token }) => {
         },
       });
       if (response.ok) {
-        const updatedProducts = products.filter(product => product.product_id !== cart_id);
+        const updatedProducts = products.filter(product => product.cart_id !== cart_id);
         setProducts(updatedProducts);
       } else {
         console.error('Failed to remove item from cart');
@@ -76,19 +76,19 @@ const Cart = ({ token }) => {
         <p>Your cart is empty</p>
       ) : (
         <div>
-{products.map(product => (
-  <div key={product.product_id}>
-    <Link to={`/product/${product.product_id}`}>
-      <img src={product.image_url} alt={product.character_name} style={{ maxWidth: '100px', maxHeight: '100px' }} />
-    </Link>
-    <div>
-      <p>Name: {product.character_name}</p>
-      <p>Quantity: {product.quantity}</p>
-      <p>Price: {product.price}</p>
-      <button onClick={() => removeFromCart(product.product_id)}>Remove</button>
-    </div>
-  </div>
-))}
+          {products.map(product => (
+            <div key={product.cart_id}>
+              <Link to={`/product/${product.product_id}`}>
+                <img src={product.image_url} alt={product.character_name} style={{ maxWidth: '100px', maxHeight: '100px' }} />
+              </Link>
+              <div>
+                <p>Name: {product.character_name}</p>
+                <p>Quantity: {product.quantity}</p>
+                <p>Price: {product.price}</p>
+                <button onClick={() => removeFromCart(product.cart_id)}>Remove</button>
+              </div>
+            </div>
+          ))}
           <p>Total: {calculateTotal()}</p>
           {/* Conditionally render the Link based on user authentication status */}
           {isLoggedIn ? (

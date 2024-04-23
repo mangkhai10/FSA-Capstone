@@ -88,15 +88,48 @@ const createProduct = async ({ character_name, description, price, stock_quantit
 };
 
 const createCartItem = async ({ user_id, product_id, quantity, price }) => {
-  // Fetch character_name and image_url from products table
-  const productInfo = await fetchSingleProduct(product_id);
-  const { character_name, image_url } = productInfo;
+  // Check if the product already exists in the cart
+  const existingCartItem = await findCartItemByProductId(user_id, product_id);
 
+  if (existingCartItem) {
+    // If the product exists in the cart, update the quantity
+    const updatedQuantity = existingCartItem.quantity + quantity;
+    await updateCartItemQuantity(existingCartItem.cart_id, updatedQuantity);
+    return await fetchCartItem(existingCartItem.cart_id);
+  } else {
+    // Fetch character_name and image_url from products table
+    const productInfo = await fetchSingleProduct(product_id);
+    const { character_name, image_url } = productInfo;
+
+    const SQL = `
+      INSERT INTO cart_items (user_id, product_id, quantity, price, character_name, image_url) 
+      VALUES ($1, $2, $3, $4, $5, $6) RETURNING *
+    `;
+    const response = await client.query(SQL, [user_id, product_id, quantity, price, character_name, image_url]);
+    return response.rows[0];
+  }
+};
+
+const findCartItemByProductId = async (user_id, product_id) => {
   const SQL = `
-    INSERT INTO cart_items (user_id, product_id, quantity, price, character_name, image_url) 
-    VALUES ($1, $2, $3, $4, $5, $6) RETURNING *
+    SELECT * FROM cart_items WHERE user_id = $1 AND product_id = $2
   `;
-  const response = await client.query(SQL, [user_id, product_id, quantity, price, character_name, image_url]);
+  const response = await client.query(SQL, [user_id, product_id]);
+  return response.rows[0];
+};
+
+const updateCartItemQuantity = async (cart_id, quantity) => {
+  const SQL = `
+    UPDATE cart_items SET quantity = $1 WHERE cart_id = $2
+  `;
+  await client.query(SQL, [quantity, cart_id]);
+};
+
+const fetchCartItem = async (cart_id) => {
+  const SQL = `
+    SELECT * FROM cart_items WHERE cart_id = $1
+  `;
+  const response = await client.query(SQL, [cart_id]);
   return response.rows[0];
 };
 
