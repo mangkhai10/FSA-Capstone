@@ -215,12 +215,9 @@ app.delete('/api/cartitems/:cart_id', async (req, res, next) => {
   });app.get('/api/order/:orderId', isLoggedIn, async (req, res, next) => {
     try {
 
-      // Fetch the order by order ID
-      const singleOrder = await fetchOrder(user_id, req.params.orderId);
-      // Send the single order as the JSON response
+      const singleOrder = await fetchOrder(req.params.orderId);
       res.json(singleOrder);
     } catch (error) {
-      // Forward any errors to the error handling middleware
       next(error);
     }
   });
