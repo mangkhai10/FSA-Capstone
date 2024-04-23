@@ -199,16 +199,12 @@ const createOrder = async ({ total_amount, address, payment_method }) => {
   return response.rows[0];
 };
 
-const fetchOrders = async (orderId) => {
-  try {
-    const SQL = `
-      SELECT * FROM orders WHERE id = $1;
-    `;
-    const response = await client.query(SQL, [orderId]);
-    return response.rows; 
-  } catch (error) {
-    throw error; 
-  }
+const fetchOrders = async (user_id, orderId) => {
+  const SQL = `
+    SELECT * FROM orders WHERE user_id = $1 AND id = $2
+  `;
+  const response = await client.query(SQL, [user_id, orderId]);
+  return response.rows[0];
 };
 
 

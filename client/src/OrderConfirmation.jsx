@@ -47,12 +47,17 @@ const OrderConfirmation = ({ token }) => {
   return (
     <div>
       <h2>Order Confirmation</h2>
-      <p>Order ID: {orderDetails.id}</p>
-      <p>Total Amount: ${orderDetails.total_amount}</p>
-      <p>Payment Method: {orderDetails.payment_method}</p>
-      <p>Order Date: {new Date(orderDetails.order_date).toLocaleString()}</p>
+      {orderDetails.id && (
+        <div key={orderDetails.id}>
+          <p>Order ID: {orderDetails.id}</p>
+          <p>Total Amount: ${orderDetails.total_amount}</p>
+          <p>Payment Method: {orderDetails.payment_method}</p>
+          <p>Order Date: {new Date(orderDetails.order_date).toLocaleString()}</p>
+        </div>
+      )}
     </div>
   );
+  
 };
 
 export default OrderConfirmation;
