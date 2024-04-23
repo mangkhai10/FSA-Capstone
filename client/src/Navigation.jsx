@@ -5,11 +5,6 @@ const Navigation = ({ token }) => {
     <nav className="navigation">
       <ul className="navigation-list">
         <li className="navigation-item">
-          <Link to="/" className="navigation-link">
-            Home
-          </Link>
-        </li>
-        <li className="navigation-item">
           <Link to="/products" className="navigation-link">
             Products
           </Link>
