@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-
 const API = "https://fsa-capstone.onrender.com/api";
 
-const PlaceOrder = ( {token}) => {
+const PlaceOrder = ({ token }) => {
   const [userDetails, setUserDetails] = useState({});
   const [paymentMethod, setPaymentMethod] = useState('');
   const [address, setAddress] = useState('');
@@ -49,15 +48,28 @@ const PlaceOrder = ( {token}) => {
       });
       if (response.ok) {
         const cartData = await response.json();
-        setCartItems(cartData);
-        // Calculate total amount
-        calculateTotal(cartData);
+        const combinedCartItems = combineCartItems(cartData); // Combine cart items here
+        setCartItems(combinedCartItems);
+        calculateTotal(combinedCartItems); // Calculate total amount with combined cart items
       } else {
         console.error('Failed to fetch cart items');
       }
     } catch (error) {
       console.error('Error fetching cart items:', error);
     }
+  };
+
+  const combineCartItems = (cartItemsData) => {
+    const combinedCartItems = [];
+    cartItemsData.forEach(item => {
+      const existingItemIndex = combinedCartItems.findIndex(cartItem => cartItem.product_id === item.product_id);
+      if (existingItemIndex !== -1) {
+        combinedCartItems[existingItemIndex].quantity += item.quantity;
+      } else {
+        combinedCartItems.push(item);
+      }
+    });
+    return combinedCartItems;
   };
 
   const handlePlaceOrder = async () => {
@@ -81,6 +93,15 @@ const PlaceOrder = ( {token}) => {
       if (response.ok) {
         console.log('Order placed successfully');
         setSuccess('Order placed successfully');
+  
+        // Clear cart items after placing the order
+        await fetch(`${API}/cartitems`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: localStorage.getItem('token')
+          }
+        });
+  
         const orderData = await response.json();
         const order = orderData.id;
         window.location.href = `/order/${order}`;
@@ -95,7 +116,7 @@ const PlaceOrder = ( {token}) => {
       console.error('Error placing the order:', error);
     }
   };
-
+  
   const calculateTotal = (cartData) => {
     const total = cartData.reduce((acc, item) => acc + (item.price * item.quantity), 0);
     setTotalAmount(total);

@@ -185,6 +185,16 @@ app.put('/api/cartitems/:cart_id', async (req, res, next) => {
     next(ex);
   }
 });
+app.delete('/api/cartitems', isLoggedIn, async (req, res, next) => {
+  try {
+    const user = await findUserByToken(req.headers.authorization);
+    const user_id = user.id;
+    await deleteCartItem(user_id);
+    res.sendStatus(204); 
+  } catch (ex) {
+    next(ex);
+  }
+});
 
 app.delete('/api/cartitems/:cart_id', async (req, res, next) => {
   try {
