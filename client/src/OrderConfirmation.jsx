@@ -6,13 +6,14 @@ const API = "https://fsa-capstone.onrender.com/api";
 const OrderConfirmation = () => {
   const [orderDetails, setOrderDetails] = useState({});
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null); // Add error state
   const { orderId } = useParams();
 
   useEffect(() => {
-    fetchOrderDetails();
+    fetchOrderDetails(); // Corrected function name
   }, []);
 
-  const fetchOrderDetails = async () => {
+  const fetchOrderDetails = async () => { // Corrected function name
     try {
       const response = await fetch(`${API}/orders/${orderId}`, {
         headers: {
@@ -25,14 +26,24 @@ const OrderConfirmation = () => {
         setLoading(false);
       } else {
         console.error('Failed to fetch order details');
+        setError('Failed to fetch order details');
+        setLoading(false); // Set loading to false to stop loading indicator
       }
     } catch (error) {
       console.error('Error fetching order details:', error);
+      setError('Error fetching order details');
+      setLoading(false); // Set loading to false to stop loading indicator
     }
   };
 
+  console.log("orderId:", orderId); // Log orderId to check if it's fetched correctly
+
   if (loading) {
     return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>; // Display error message if there's an error
   }
 
   return (

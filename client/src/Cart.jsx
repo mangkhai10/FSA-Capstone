@@ -92,7 +92,7 @@ const Cart = ({ token }) => {
           ))}
           <p>Total: {calculateTotal()}</p>
           {isLoggedIn ? (
-            <Link to="/checkout">
+            <Link to="/order">
               <button>Checkout</button>
             </Link>
           ) : (

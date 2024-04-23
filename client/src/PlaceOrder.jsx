@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
+
 const API = "https://fsa-capstone.onrender.com/api";
 
 const PlaceOrder = () => {
@@ -80,7 +81,9 @@ const PlaceOrder = () => {
       if (response.ok) {
         console.log('Order placed successfully');
         setSuccess('Order placed successfully');
-        // Clear cart and reset state
+        const orderData = await response.json();
+        const order = orderData.id;
+        window.location.href = `/order/${order}`;
         setCartItems([]);
         setTotalAmount(0);
         setError('');

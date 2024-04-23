@@ -14,7 +14,8 @@ const {
     authenticate,
     createSingleProduct,
     fetchSingleProduct,
-    createOrder
+    createOrder,
+    fetchOrder
   } = require('./db');
   const express = require('express');
   const app = express();
