@@ -199,7 +199,7 @@ const createOrder = async ({ user_id, total_amount, address, payment_method }) =
   const response = await client.query(SQL, [uuid.v4(), user_id, total_amount, address, payment_method]);
   return response.rows[0];
 };
-const fetchOrder = async (user_id, orderId) => {
+const fetchOrders = async (user_id, orderId) => {
   const SQL = `
     SELECT * FROM orders WHERE user_id = $1 AND id = $2
   `;
@@ -264,5 +264,5 @@ module.exports = {
   createSingleProduct,
   fetchSingleProduct,
   createOrder,
-  fetchOrder
+  fetchOrders
 };

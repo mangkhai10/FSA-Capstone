@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 
 const API = "https://fsa-capstone.onrender.com/api";
 
-const OrderConfirmation = ( {token}) => {
+const OrderedProducts = ( {token}) => {
   const [orderDetails, setOrderDetails] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null); // Add error state
@@ -15,7 +15,8 @@ const OrderConfirmation = ( {token}) => {
 
   const fetchOrderDetails = async () => { // Corrected function name
     try {
-      const response = await fetch(`${API}/orders/${orderId}`, {
+      const response = await fetch(`${API}/order`, {
+        method: 'GET',
         headers: {
           Authorization: localStorage.getItem('token')
         }
@@ -57,4 +58,4 @@ const OrderConfirmation = ( {token}) => {
   );
 };
 
-export default OrderConfirmation;
+export default OrderedProducts;

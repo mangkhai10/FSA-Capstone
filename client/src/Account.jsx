@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import OrderConfirmation from './OrderConfirmation'; // Import the OrderConfirmation component
+import { Link } from 'react-router-dom';
+import OrderConfirmation from './OrderConfirmation';
+
 
 const API = "https://fsa-capstone.onrender.com/api";
 
@@ -116,9 +118,10 @@ const Account = ({ token }) => {
           )}
           {editing && <button onClick={handleSave}>Save</button>}
           <div>
-            <h3>Orders Placed</h3>
-            <OrderConfirmation token={token} />
-          </div>
+
+  <OrderConfirmation token={token} />
+  <Link to="/account/orders">View Ordered Products</Link>
+</div>
         </div>
       )}
     </div>
