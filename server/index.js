@@ -202,7 +202,7 @@ app.delete('/api/cartitems/:cart_id', async (req, res, next) => {
       // Get user ID from the logged-in user
       const user_id = req.user.id;
       // Create the order
-      const order = await createOrder({ user_id, total_amount, address, payment_method });
+      const order = await createOrders({ user_id, total_amount, address, payment_method });
       res.status(201).json(order);
     } catch (error) {
       next(error);
