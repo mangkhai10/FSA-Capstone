@@ -17,7 +17,22 @@ const PlaceOrder = ({ token }) => {
   useEffect(() => {
     fetchUserDetails();
     fetchCartItems();
+    clearCartItems();
+
   }, [token]);
+
+  const clearCartItems = async () => {
+    try {
+      await fetch(`${API}/cartitems`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: localStorage.getItem('token')
+        }
+      });
+    } catch (error) {
+      console.error('Error clearing cart items:', error);
+    }
+  };
 
   const fetchUserDetails = async () => {
     try {
@@ -107,7 +122,7 @@ const PlaceOrder = ({ token }) => {
       console.error('Error placing the order:', error);
     }
   };
-
+  
   const calculateTotal = (cartData) => {
     const total = cartData.reduce((acc, item) => acc + (item.price * item.quantity), 0);
     setTotalAmount(total);

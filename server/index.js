@@ -196,12 +196,19 @@ app.delete('/api/cartitems/:cart_id', async (req, res, next) => {
   }
 });
   
+app.delete('/api/cartitems', async (req, res, next) => {
+  try {
+    await clearCartItems();
+    res.sendStatus(204);
+  } catch (error) {
+    next(error); 
+  }
+});
   // Endpoint to initiate the checkout process
   app.post('/api/order', isLoggedIn, async (req, res, next) => {
     try {
       const { total_amount, address, payment_method } = req.body;
-      const order = await createOrder({ total_amount, address, payment_method });
-      await clearCartItems(req.user.id); 
+      const order = await createOrder({ total_amount, address, payment_method }); 
       res.status(201).json(order);
     } catch (error) {
       next(error);

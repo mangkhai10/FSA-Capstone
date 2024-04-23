@@ -192,11 +192,11 @@ const deleteCartItem = async (cart_id) => {
 };
 
 // Function to clear cart items for a specific user
-const clearCartItems = async (userId) => {
+const clearCartItems = async () => {
   const SQL = `
-    DELETE FROM cart_items WHERE user_id = $1
+    DELETE FROM cart_items 
   `;
-  await client.query(SQL, [userId]);
+  await client.query(SQL);
 };
 
 const createOrder = async ({ total_amount, address, payment_method }) => {
