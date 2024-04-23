@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import OrderConfirmation from './OrderConfirmation'; // Import the OrderConfirmation component
 
 const API = "https://fsa-capstone.onrender.com/api";
 
@@ -28,11 +29,11 @@ const Account = ({ token }) => {
         }
         const userData = await response.json();
         setUser(userData);
+        setLoading(false); // Set loading to false after user data is fetched
       } catch (error) {
         console.error('Error fetching user data:', error);
         setErrorMessage('Failed to fetch user data. Please try again later.');
-      } finally {
-        setLoading(false);
+        setLoading(false); // Set loading to false in case of error
       }
     }
   };
@@ -41,8 +42,7 @@ const Account = ({ token }) => {
     window.localStorage.removeItem('token');
     window.location.href = '/login';
   };
-  
-  
+
   const handleEdit = () => {
     setEditing(true);
     setEditedAddress(user.address || '');
@@ -115,6 +115,10 @@ const Account = ({ token }) => {
             <button onClick={handleEdit}>Edit Payment Method</button>
           )}
           {editing && <button onClick={handleSave}>Save</button>}
+          <div>
+            <h3>Orders Placed</h3>
+            <OrderConfirmation token={token} />
+          </div>
         </div>
       )}
     </div>

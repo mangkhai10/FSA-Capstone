@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 const API = "https://fsa-capstone.onrender.com/api";
 
-const OrderConfirmation = () => {
+const OrderConfirmation = ({token}) => {
   const [orderDetails, setOrderDetails] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null); // Add error state
@@ -11,7 +11,7 @@ const OrderConfirmation = () => {
 
   useEffect(() => {
     fetchOrderDetails(); // Corrected function name
-  }, []);
+  }, [token]);
 
   const fetchOrderDetails = async () => { // Corrected function name
     try {
@@ -51,7 +51,6 @@ const OrderConfirmation = () => {
       <h2>Order Confirmation</h2>
       <p>Order ID: {orderDetails.id}</p>
       <p>Total Amount: ${orderDetails.total_amount}</p>
-      <p>Payment Method: {orderDetails.payment_method}</p>
       <p>Order Date: {new Date(orderDetails.order_date).toLocaleString()}</p>
     </div>
   );

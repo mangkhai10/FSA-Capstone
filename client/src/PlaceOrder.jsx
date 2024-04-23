@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const API = "https://fsa-capstone.onrender.com/api";
 
-const PlaceOrder = () => {
+const PlaceOrder = ( {token}) => {
   const [userDetails, setUserDetails] = useState({});
   const [paymentMethod, setPaymentMethod] = useState('');
   const [address, setAddress] = useState('');
@@ -18,7 +18,7 @@ const PlaceOrder = () => {
   useEffect(() => {
     fetchUserDetails();
     fetchCartItems();
-  }, []);
+  }, [token]);
 
   const fetchUserDetails = async () => {
     try {
