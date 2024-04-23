@@ -218,13 +218,9 @@ app.delete('/api/cartitems/:cart_id', async (req, res, next) => {
   });
   app.get('/api/orders/:orderId', isLoggedIn, async (req, res, next) => {
     try {
-      // Get user ID from the logged-in user
-      const user_id = req.user.id;
-      // Fetch the order by order ID
-      const order = await fetchOrders(req.params.orderId);
-      res.json(order);
-    } catch (error) {
-      next(error);
+      res.send(await fetchOrders(req.params.productId));
+    } catch (ex) {
+      next(ex);
     }
   });
   

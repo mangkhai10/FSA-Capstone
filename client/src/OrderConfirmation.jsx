@@ -17,8 +17,8 @@ const OrderConfirmation = ({ token }) => {
     try {
       const response = await fetch(`${API}/orders/${orderId}`, {
         headers: {
-          Authorization: token // Set Authorization header with token
-        }
+          Authorization: token 
+        },
       });
       if (response.ok) {
         const orderData = await response.json();
