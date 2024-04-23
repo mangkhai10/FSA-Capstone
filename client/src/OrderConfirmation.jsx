@@ -11,11 +11,11 @@ const OrderConfirmation = ({ token }) => {
 
   useEffect(() => {
     fetchOrderDetails();
-  }, [orderId, token]); // Include 'orderId' and 'token' in dependency array
+  }, [token]);
 
   const fetchOrderDetails = async () => {
     try {
-      const response = await fetch(`${API}/orders/${orderId}`, {
+      const response = await fetch(`${API}/order/${orderId}`, {
         headers: {
           Authorization: token 
         },

@@ -191,7 +191,7 @@ const deleteCartItem = async (cart_id) => {
   await client.query(SQL, [cart_id]);
 };
 
-const createOrders = async ({ total_amount, address, payment_method }) => {
+const createOrder = async ({ total_amount, address, payment_method }) => {
   const SQL = `
     INSERT INTO orders (id, total_amount, address, payment_method) VALUES ($1, $2, $3, $4) RETURNING *
   `;
@@ -199,7 +199,7 @@ const createOrders = async ({ total_amount, address, payment_method }) => {
   return response.rows[0];
 };
 
-const fetchOrders = async (user_id, orderId) => {
+const fetchOrder = async (user_id, orderId) => {
   const SQL = `
     SELECT * FROM orders WHERE user_id = $1 AND id = $2
   `;
@@ -263,6 +263,6 @@ module.exports = {
   authenticate,
   createSingleProduct,
   fetchSingleProduct,
-  createOrders,
-  fetchOrders
+  createOrder,
+  fetchOrder
 };

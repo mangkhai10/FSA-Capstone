@@ -66,7 +66,7 @@ const PlaceOrder = ( {token}) => {
       return;
     }
     try {
-      const response = await fetch(`${API}/orders`, {
+      const response = await fetch(`${API}/order`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -82,8 +82,8 @@ const PlaceOrder = ( {token}) => {
         console.log('Order placed successfully');
         setSuccess('Order placed successfully');
         const orderData = await response.json();
-        const orders = orderData.id;
-        window.location.href = `/orders/${orders}`;
+        const order = orderData.id;
+        window.location.href = `/order/${order}`;
         setCartItems([]);
         setTotalAmount(0);
         setError('');
