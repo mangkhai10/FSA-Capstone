@@ -170,6 +170,7 @@ app.post('/api/cartitems', async (req, res, next) => {
 });
 
 
+
 app.get('/api/cartitems', async (req, res, next) => {
   try {
     res.send(await fetchCartItems());
@@ -185,15 +186,6 @@ app.put('/api/cartitems/:cart_id', async (req, res, next) => {
     next(ex);
   }
 });
-app.delete('/api/cartitems', async (req, res, next) => {
-  try {
-    await deleteCartItem(); 
-    res.sendStatus(204); 
-  } catch (ex) {
-    next(ex);
-  }
-});
-
 app.delete('/api/cartitems/:cart_id', async (req, res, next) => {
   try {
     const cart_id = parseInt(req.params.cart_id);
@@ -209,6 +201,7 @@ app.delete('/api/cartitems/:cart_id', async (req, res, next) => {
     try {
       const { total_amount, address, payment_method } = req.body;
       const order = await createOrder({ total_amount, address, payment_method });
+      await clearCartItems(req.user.id); 
       res.status(201).json(order);
     } catch (error) {
       next(error);

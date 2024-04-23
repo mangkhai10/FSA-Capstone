@@ -93,15 +93,6 @@ const PlaceOrder = ({ token }) => {
       if (response.ok) {
         console.log('Order placed successfully');
         setSuccess('Order placed successfully');
-  
-        // Clear cart items after placing the order
-        await fetch(`${API}/cartitems`, {
-          method: 'DELETE',
-          headers: {
-            Authorization: localStorage.getItem('token')
-          }
-        });
-  
         const orderData = await response.json();
         const order = orderData.id;
         window.location.href = `/order/${order}`;
@@ -116,7 +107,7 @@ const PlaceOrder = ({ token }) => {
       console.error('Error placing the order:', error);
     }
   };
-  
+
   const calculateTotal = (cartData) => {
     const total = cartData.reduce((acc, item) => acc + (item.price * item.quantity), 0);
     setTotalAmount(total);
