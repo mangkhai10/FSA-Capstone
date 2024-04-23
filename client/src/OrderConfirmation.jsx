@@ -17,7 +17,7 @@ const OrderConfirmation = ({ token }) => {
     try {
       const response = await fetch(`${API}/order/${orderId}`, {
         headers: {
-          Authorization: token 
+          Authorization: localStorage.getItem('token')
         },
       });
       if (response.ok) {

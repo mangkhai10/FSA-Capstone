@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const API = "https://fsa-capstone.onrender.com/api";
 
@@ -12,7 +13,7 @@ const Account = ({ token }) => {
 
   useEffect(() => {
     authenticate();
-  }, []);
+  }, [token]);
 
   const authenticate = async () => {
     if (token) {
@@ -20,7 +21,7 @@ const Account = ({ token }) => {
         const response = await fetch(`${API}/auth/me`, {
           method: "GET",
           headers: {
-            Authorization: token,
+            Authorization: localStorage.getItem('token')
           },
         });
         if (!response.ok) {
@@ -54,7 +55,7 @@ const Account = ({ token }) => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: token,
+          Authorization: localStorage.getItem('token')
         },
         body: JSON.stringify({
           address: editedAddress,
@@ -116,6 +117,11 @@ const Account = ({ token }) => {
           {editing && <button onClick={handleSave}>Save</button>}
         </div>
       )}
+           {token && (
+          <li className="order">
+            <Link to="/account/order">View Ordered Products</Link>
+          </li>
+        )}
     </div>
   );
 };
