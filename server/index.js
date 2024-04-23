@@ -9,7 +9,6 @@ const {
     fetchUsers,
     fetchProducts,
     fetchCartItems,
-    deleteProduct,
     deleteCartItem,
     findUserByToken,
     authenticate,
@@ -203,8 +202,19 @@ app.delete('/api/cartitems/:cart_id', async (req, res, next) => {
       const user_id = req.user.id;
       // Create the order
       const order = await createOrder({ user_id, total_amount, address, payment_method });
-      // You can perform additional actions here such as updating product quantities, sending confirmation emails, etc.
       res.status(201).json(order);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get('/api/checkout', isLoggedIn, async (req, res, next) => {
+    try {
+      // Get user ID from the logged-in user
+      const user_id = req.user.id;
+      // Fetch the order
+      const order = await fetchOrder(user_id);
+      res.json(order);
     } catch (error) {
       next(error);
     }

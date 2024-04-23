@@ -50,7 +50,7 @@ const createTables = async () => {
     );
     
     CREATE TABLE orders (
-      order_id SERIAL PRIMARY KEY,
+      id UUID PRIMARY KEY,
       user_id UUID REFERENCES users(id),
       total_amount DECIMAL(10, 2) NOT NULL,
       status VARCHAR(20) DEFAULT 'pending',
@@ -194,9 +194,9 @@ const deleteCartItem = async (cart_id) => {
 
 const createOrder = async ({ user_id, total_amount, address, payment_method }) => {
   const SQL = `
-    INSERT INTO orders (user_id, total_amount, address, payment_method) VALUES ($1, $2, $3, $4) RETURNING *
+    INSERT INTO orders (id, user_id, total_amount, address, payment_method) VALUES ($1, $2, $3, $4, $5) RETURNING *
   `;
-  const response = await client.query(SQL, [user_id, total_amount, address, payment_method]);
+  const response = await client.query(SQL, [uuid.v4(), user_id, total_amount, address, payment_method]);
   return response.rows[0];
 };
 
