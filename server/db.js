@@ -206,6 +206,14 @@ const fetchOrder = async (orderId) => {
   const response = await client.query(SQL, [orderId]);
   return response.rows[0];
 };
+const fetchAllOrderIds = async () => {
+  const SQL = `
+    SELECT id FROM orders
+  `;
+  const response = await client.query(SQL);
+  return response.rows.map(row => row.id);
+};
+
 
 
 // Find user by token
@@ -264,5 +272,6 @@ module.exports = {
   createSingleProduct,
   fetchSingleProduct,
   createOrder,
-  fetchOrder
+  fetchOrder,
+  fetchAllOrderIds
 };

@@ -98,10 +98,6 @@ const Products = () => {
     }
   };
 
-  const handleQuantityChange = (productId, quantity) => {
-    const updatedQuantityMap = { ...quantityMap, [productId]: isNaN(quantity) || quantity === '' ? '' : parseInt(quantity) };
-    setQuantityMap(updatedQuantityMap);
-  };
 
   return (
     <div>
@@ -134,12 +130,6 @@ const Products = () => {
             <div>Description: {product.description}</div>
             
             {/* Quantity input and Add to Cart button */}
-            <input
-              type="number"
-              min="1"
-              value={quantityMap[product.product_id]}
-              onChange={(e) => handleQuantityChange(product.product_id, parseInt(e.target.value))}
-            />
             <button onClick={() => handleAddToCart(product.product_id)}>Add to Cart</button>
           </li>
         ))}

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 
 const API = "https://fsa-capstone.onrender.com/api";
 
@@ -117,11 +116,6 @@ const Account = ({ token }) => {
           {editing && <button onClick={handleSave}>Save</button>}
         </div>
       )}
-           {token && (
-          <li className="order">
-            <Link to="/account/order">View Ordered Products</Link>
-          </li>
-        )}
     </div>
   );
 };

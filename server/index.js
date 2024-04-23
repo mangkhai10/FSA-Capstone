@@ -15,7 +15,8 @@ const {
     createSingleProduct,
     fetchSingleProduct,
     createOrder,
-    fetchOrder
+    fetchOrder,
+    fetchAllOrderIds
   } = require('./db');
   const express = require('express');
   const app = express();
@@ -207,13 +208,16 @@ app.delete('/api/cartitems/:cart_id', async (req, res, next) => {
   });
 
 
-  app.get('/api/order', async (req, res, next) => {
+  app.get('/api/orders', isLoggedIn, async (req, res, next) => {
     try {
-      res.send(await fetchOrder());
-    } catch (ex) {
-      next(ex);
+      const orderIds = await fetchAllOrderIds();
+      res.json(orderIds);
+    } catch (error) {
+      next(error);
     }
-  });app.get('/api/order/:orderId', isLoggedIn, async (req, res, next) => {
+  });
+  
+  app.get('/api/order/:orderId', isLoggedIn, async (req, res, next) => {
     try {
 
       const singleOrder = await fetchOrder(req.params.orderId);

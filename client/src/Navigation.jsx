@@ -1,8 +1,6 @@
 import { Link } from 'react-router-dom';
 
 const Navigation = ({ token }) => {
-
-
   return (
     <nav className="navigation">
       <ul className="navigation-list">
@@ -36,11 +34,13 @@ const Navigation = ({ token }) => {
           </>
         )}
         {token && (
-          <li className="navigation-item">
-            <Link to="/account" className="navigation-link">
-              Account
-            </Link>
-          </li>
+          <>
+            <li className="navigation-item">
+              <Link to="/account" className="navigation-link">
+                Account
+              </Link>
+            </li>
+          </>
         )}
       </ul>
     </nav>
