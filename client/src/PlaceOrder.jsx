@@ -65,7 +65,7 @@ const PlaceOrder = () => {
       return;
     }
     try {
-      const response = await fetch(`${API}/checkout`, {
+      const response = await fetch(`${API}/order`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -195,7 +195,7 @@ app.delete('/api/cartitems/:cart_id', async (req, res, next) => {
 });
   
   // Endpoint to initiate the checkout process
-  app.post('/api/checkout', isLoggedIn, async (req, res, next) => {
+  app.post('/api/order', isLoggedIn, async (req, res, next) => {
     try {
       const { total_amount, address, payment_method } = req.body;
       // Get user ID from the logged-in user
@@ -208,12 +208,12 @@ app.delete('/api/cartitems/:cart_id', async (req, res, next) => {
     }
   });
 
-  app.get('/api/checkout', isLoggedIn, async (req, res, next) => {
+  app.get('/api/orders/:orderId', isLoggedIn, async (req, res, next) => {
     try {
       // Get user ID from the logged-in user
       const user_id = req.user.id;
-      // Fetch the order
-      const order = await fetchOrder(user_id);
+      // Fetch the order by order ID
+      const order = await fetchOrder(user_id, req.params.orderId);
       res.json(order);
     } catch (error) {
       next(error);

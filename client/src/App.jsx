@@ -8,6 +8,7 @@ import Account from './Account';
 import SingleProduct from './SingleProduct'; 
 import Cart from './Cart';
 import PlaceOrder from './PlaceOrder';
+import OrderConfirmation from './OrderConfirmation';
 
 
 function App() {
@@ -21,7 +22,8 @@ function App() {
         <Route path="/products" element={<Products />} />
         <Route path="/product/:productId" element={<SingleProduct/>} /> 
         <Route path="/cart" element={<Cart token={token} setToken={setToken}/>} /> 
-        <Route path="/checkout" element={<PlaceOrder token={token} setToken={setToken} />} />
+        <Route path="/order" element={<PlaceOrder token={token} setToken={setToken} />} />
+        <Route path="/checkout/:orderId" element={<OrderConfirmation token={token} setToken={setToken} />} />
         <Route path="/register" element={<Register setToken={setToken} />} />
         <Route path="/login" element={<Login token={token} setToken={setToken}/>} />
         <Route path="/account" element={<Account token={token} setToken={setToken} />} />
