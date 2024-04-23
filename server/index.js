@@ -199,7 +199,7 @@ app.delete('/api/cartitems/:cart_id', async (req, res, next) => {
   app.post('/api/order', isLoggedIn, async (req, res, next) => {
     try {
       const { total_amount, address, payment_method } = req.body;
-      const order = await createOrder({ user_id, total_amount, address, payment_method });
+      const order = await createOrder({ total_amount, address, payment_method });
       res.status(201).json(order);
     } catch (error) {
       next(error);
@@ -214,7 +214,7 @@ app.delete('/api/cartitems/:cart_id', async (req, res, next) => {
     }
   });app.get('/api/order/:orderId', isLoggedIn, async (req, res, next) => {
     try {
-      
+
       // Fetch the order by order ID
       const singleOrder = await fetchOrder(user_id, req.params.orderId);
       // Send the single order as the JSON response
