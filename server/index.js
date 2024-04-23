@@ -14,7 +14,7 @@ const {
     authenticate,
     createSingleProduct,
     fetchSingleProduct,
-    createOrder,
+    createOrders,
     fetchOrders
   } = require('./db');
   const express = require('express');
@@ -196,7 +196,7 @@ app.delete('/api/cartitems/:cart_id', async (req, res, next) => {
 });
   
   // Endpoint to initiate the checkout process
-  app.post('/api/order', isLoggedIn, async (req, res, next) => {
+  app.post('/api/orders', isLoggedIn, async (req, res, next) => {
     try {
       const { total_amount, address, payment_method } = req.body;
       // Get user ID from the logged-in user
