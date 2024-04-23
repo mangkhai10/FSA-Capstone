@@ -125,7 +125,6 @@ const Products = () => {
             </Link>
             <div>Series: {product.series}</div>
             <div>Price: {product.price}</div>
-            <div>Stock Quantity: {product.stock_quantity}</div>
             <div>Category: {product.category}</div>
             <div>Description: {product.description}</div>
             
