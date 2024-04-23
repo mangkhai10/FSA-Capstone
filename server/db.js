@@ -191,25 +191,26 @@ const deleteCartItem = async (cart_id) => {
   await client.query(SQL, [cart_id]);
 };
 
-const createOrder = async ({ user_id, total_amount, address, payment_method }) => {
+const createOrder = async ({ total_amount, address, payment_method }) => {
   const SQL = `
-    INSERT INTO orders (id, user_id, total_amount, address, payment_method) VALUES ($1, $2, $3, $4, $5) RETURNING *
+    INSERT INTO orders (id, total_amount, address, payment_method) VALUES ($1, $2, $3, $4) RETURNING *
   `;
-  const response = await client.query(SQL, [uuid.v4(), user_id, total_amount, address, payment_method]);
+  const response = await client.query(SQL, [uuid.v4(), total_amount, address, payment_method]);
   return response.rows[0];
 };
 
-const fetchOrders = async () => {
+const fetchOrders = async (orderId) => {
   try {
     const SQL = `
-      SELECT * FROM orders;
+      SELECT * FROM orders WHERE id = $1;
     `;
-    const response = await client.query(SQL);
-    return response.rows; // Returning all rows from the orders table
+    const response = await client.query(SQL, [orderId]);
+    return response.rows; 
   } catch (error) {
-    throw error; // Rethrow the error for handling in the caller function
+    throw error; 
   }
 };
+
 
 // Find user by token
 const findUserByToken = async (token) => {

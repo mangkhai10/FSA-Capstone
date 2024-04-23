@@ -218,7 +218,7 @@ app.delete('/api/cartitems/:cart_id', async (req, res, next) => {
   });
   app.get('/api/orders/:orderId', isLoggedIn, async (req, res, next) => {
     try {
-      res.send(await fetchOrders(req.params.productId));
+      res.send(await fetchOrders(req.params.orderId));
     } catch (ex) {
       next(ex);
     }
