@@ -11,7 +11,7 @@ const OrderConfirmation = ({ token }) => {
 
   useEffect(() => {
     fetchOrderDetails();
-  }, [token]); // Include 'orderId' and 'token' in dependency array
+  }, [orderId, token]); // Include 'orderId' and 'token' in dependency array
 
   const fetchOrderDetails = async () => {
     try {
@@ -25,7 +25,7 @@ const OrderConfirmation = ({ token }) => {
         setOrderDetails(orderData);
         setLoading(false);
       } else {
-        console.error('Failed to fetch order details');
+        console.error('Failed to fetch order details. Server responded with status:', response.status);
         setError('Failed to fetch order details');
         setLoading(false);
       }
@@ -35,7 +35,7 @@ const OrderConfirmation = ({ token }) => {
       setLoading(false);
     }
   };
-
+  
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -47,17 +47,14 @@ const OrderConfirmation = ({ token }) => {
   return (
     <div>
       <h2>Order Confirmation</h2>
-      {orderDetails.id && (
-        <div key={orderDetails.id}>
-          <p>Order ID: {orderDetails.id}</p>
-          <p>Total Amount: ${orderDetails.total_amount}</p>
-          <p>Payment Method: {orderDetails.payment_method}</p>
-          <p>Order Date: {new Date(orderDetails.order_date).toLocaleString()}</p>
-        </div>
-      )}
+      <div key={orderDetails.id}>
+        <p>Order ID: {orderDetails.id}</p>
+        <p>Total Amount: ${orderDetails.total_amount}</p>
+        <p>Payment Method: {orderDetails.payment_method}</p>
+        <p>Order Date: {new Date(orderDetails.order_date).toLocaleString()}</p>
+      </div>
     </div>
   );
-  
 };
 
 export default OrderConfirmation;

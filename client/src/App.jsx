@@ -9,8 +9,6 @@ import SingleProduct from './SingleProduct';
 import Cart from './Cart';
 import PlaceOrder from './PlaceOrder';
 import OrderConfirmation from './OrderConfirmation';
-import OrderedProducts from './OrderedProducts';
-
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
@@ -24,11 +22,10 @@ function App() {
         <Route path="/product/:productId" element={<SingleProduct/>} /> 
         <Route path="/cart" element={<Cart token={token} setToken={setToken}/>} /> 
         <Route path="/order" element={<PlaceOrder token={token} setToken={setToken} />} />
-        <Route path="/order/:orderId" element={<OrderConfirmation token={token} setToken={setToken} />} />
+        <Route path="/order/:orderId" element={<OrderConfirmation token={token} />} />
         <Route path="/register" element={<Register setToken={setToken} />} />
         <Route path="/login" element={<Login token={token} setToken={setToken}/>} />
         <Route path="/account" element={<Account token={token} setToken={setToken} />} />
-        <Route path="/account/orders" element={<OrderedProducts token={token} setToken={setToken} />} />
       </Routes>
     </div>
   );
