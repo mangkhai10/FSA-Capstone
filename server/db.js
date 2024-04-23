@@ -53,7 +53,6 @@ const createTables = async () => {
       id UUID PRIMARY KEY,
       user_id UUID REFERENCES users(id),
       total_amount DECIMAL(10, 2) NOT NULL,
-      status VARCHAR(20) DEFAULT 'pending',
       address VARCHAR(100) NOT NULL,
       payment_method VARCHAR(100) NOT NULL,
       order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -199,14 +198,18 @@ const createOrder = async ({ user_id, total_amount, address, payment_method }) =
   const response = await client.query(SQL, [uuid.v4(), user_id, total_amount, address, payment_method]);
   return response.rows[0];
 };
-const fetchOrders = async (user_id, orderId) => {
-  const SQL = `
-    SELECT * FROM orders WHERE user_id = $1 AND id = $2
-  `;
-  const response = await client.query(SQL, [user_id, orderId]);
-  return response.rows[0];
-};
 
+const fetchOrders = async () => {
+  try {
+    const SQL = `
+      SELECT * FROM orders;
+    `;
+    const response = await client.query(SQL);
+    return response.rows; // Returning all rows from the orders table
+  } catch (error) {
+    throw error; // Rethrow the error for handling in the caller function
+  }
+};
 
 // Find user by token
 const findUserByToken = async (token) => {

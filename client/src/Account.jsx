@@ -1,82 +1,81 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import OrderConfirmation from './OrderConfirmation';
-
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import OrderConfirmation from "./OrderConfirmation";
 
 const API = "https://fsa-capstone.onrender.com/api";
 
 const Account = ({ token }) => {
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
-  const [editedAddress, setEditedAddress] = useState('');
-  const [editedPaymentMethod, setEditedPaymentMethod] = useState('');
+  const [editedAddress, setEditedAddress] = useState("");
+  const [editedPaymentMethod, setEditedPaymentMethod] = useState("");
 
   useEffect(() => {
     authenticate();
-  }, []);  
+  }, []);
 
   const authenticate = async () => {
     if (token) {
       try {
         const response = await fetch(`${API}/auth/me`, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            Authorization: token
-          }
+            Authorization: token,
+          },
         });
         if (!response.ok) {
-          throw new Error('Failed to fetch user data');
+          throw new Error("Failed to fetch user data");
         }
         const userData = await response.json();
         setUser(userData);
         setLoading(false); // Set loading to false after user data is fetched
       } catch (error) {
-        console.error('Error fetching user data:', error);
-        setErrorMessage('Failed to fetch user data. Please try again later.');
+        console.error("Error fetching user data:", error);
+        setErrorMessage("Failed to fetch user data. Please try again later.");
         setLoading(false); // Set loading to false in case of error
       }
     }
   };
 
   const logout = () => {
-    window.localStorage.removeItem('token');
-    window.location.href = '/login';
+    window.localStorage.removeItem("token");
+    window.location.href = "/login";
   };
 
   const handleEdit = () => {
     setEditing(true);
-    setEditedAddress(user.address || '');
-    setEditedPaymentMethod(user.payment_method || '');
+    setEditedAddress(user.address || "");
+    setEditedPaymentMethod(user.payment_method || "");
   };
 
   const handleSave = async () => {
     try {
       const response = await fetch(`${API}/users/${user.id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: token
+          "Content-Type": "application/json",
+          Authorization: token,
         },
         body: JSON.stringify({
           address: editedAddress,
-          payment_method: editedPaymentMethod
-        })
+          payment_method: editedPaymentMethod,
+        }),
       });
       if (!response.ok) {
-        throw new Error('Failed to update user data');
+        throw new Error("Failed to update user data");
       }
       // Update user object with edited values
-      setUser(prevUser => ({
+      setUser((prevUser) => ({
         ...prevUser,
         address: editedAddress,
-        payment_method: editedPaymentMethod
+        payment_method: editedPaymentMethod,
       }));
       setEditing(false);
     } catch (error) {
-      console.error('Error updating user data:', error);
-      setErrorMessage('Failed to update user data. Please try again later.');
+      console.error("Error updating user data:", error);
+      setErrorMessage("Failed to update user data. Please try again later.");
     }
   };
 
@@ -118,10 +117,9 @@ const Account = ({ token }) => {
           )}
           {editing && <button onClick={handleSave}>Save</button>}
           <div>
-
-  <OrderConfirmation token={token} />
-  <Link to="/account/orders">View Ordered Products</Link>
-</div>
+            <OrderConfirmation token={token} />
+            <Link to="/account/orders">View Ordered Products</Link>
+          </div>
         </div>
       )}
     </div>

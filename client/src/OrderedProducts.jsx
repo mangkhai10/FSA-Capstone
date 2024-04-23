@@ -15,7 +15,7 @@ const OrderedProducts = ( {token}) => {
 
   const fetchOrderDetails = async () => { // Corrected function name
     try {
-      const response = await fetch(`${API}/order`, {
+      const response = await fetch(`${API}/orders`, {
         method: 'GET',
         headers: {
           Authorization: localStorage.getItem('token')

@@ -3,21 +3,21 @@ import { useParams } from 'react-router-dom';
 
 const API = "https://fsa-capstone.onrender.com/api";
 
-const OrderConfirmation = ( {token}) => {
+const OrderConfirmation = ({ token }) => {
   const [orderDetails, setOrderDetails] = useState({});
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // Add error state
+  const [error, setError] = useState(null);
   const { orderId } = useParams();
 
   useEffect(() => {
-    fetchOrderDetails(); // Corrected function name
-  }, [token]);
+    fetchOrderDetails();
+  }, [token]); // Include 'orderId' and 'token' in dependency array
 
-  const fetchOrderDetails = async () => { // Corrected function name
+  const fetchOrderDetails = async () => {
     try {
       const response = await fetch(`${API}/orders/${orderId}`, {
         headers: {
-          Authorization: localStorage.getItem('token')
+          Authorization: token // Set Authorization header with token
         }
       });
       if (response.ok) {
@@ -27,23 +27,21 @@ const OrderConfirmation = ( {token}) => {
       } else {
         console.error('Failed to fetch order details');
         setError('Failed to fetch order details');
-        setLoading(false); // Set loading to false to stop loading indicator
+        setLoading(false);
       }
     } catch (error) {
       console.error('Error fetching order details:', error);
       setError('Error fetching order details');
-      setLoading(false); // Set loading to false to stop loading indicator
+      setLoading(false);
     }
   };
-
-  console.log("orderId:", orderId); // Log orderId to check if it's fetched correctly
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>; // Display error message if there's an error
+    return <div>Error: {error}</div>;
   }
 
   return (
