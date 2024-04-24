@@ -98,7 +98,8 @@ const Products = () => {
 
   return (
     <div className="container">
-      <h1 className="heading">Welcome to Anime Figure Store</h1>
+      <h1 className="heading">Welcome to Tokyo Otaku Mode</h1>
+      <h2 className="heading">Shipping Japan's finest OTAKU goods to the world! That is the Tokyo Otaku Mode Shop mission!</h2>
       <div className="search-container">
         <input
           type="text"
