@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './index.css'; // Import your CSS file
 
 const API = "https://fsa-capstone.onrender.com/api/auth";
 
@@ -45,12 +46,12 @@ const Register = () => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">Sign Up</h2>
+    <div className="register-container">
+      <h2 className="register-heading">Sign Up</h2>
       {errorMessage && <p className="error">{errorMessage}</p>}
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="first_name">
-          First Name:
+      <form onSubmit={handleSubmit} className="register-form">
+        <div className="form-group">
+          <label htmlFor="first_name">First Name:</label>
           <input
             type="text"
             id="first_name"
@@ -60,9 +61,9 @@ const Register = () => {
             onChange={handleChange}
             required
           />
-        </label>
-        <label htmlFor="last_name">
-          Last Name:
+        </div>
+        <div className="form-group">
+          <label htmlFor="last_name">Last Name:</label>
           <input
             type="text"
             id="last_name"
@@ -72,9 +73,9 @@ const Register = () => {
             onChange={handleChange}
             required
           />
-        </label>
-        <label htmlFor="email">
-          Email:
+        </div>
+        <div className="form-group">
+          <label htmlFor="email">Email:</label>
           <input
             type="email"
             id="email"
@@ -84,9 +85,9 @@ const Register = () => {
             onChange={handleChange}
             required
           />
-        </label>
-        <label htmlFor="password">
-          Password:
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password:</label>
           <input
             type="password"
             id="password"
@@ -96,8 +97,8 @@ const Register = () => {
             onChange={handleChange}
             required
           />
-        </label>
-        <button type="submit">Submit</button>
+        </div>
+        <button type="submit" className="submit-button">Submit</button>
       </form>
     </div>
   );

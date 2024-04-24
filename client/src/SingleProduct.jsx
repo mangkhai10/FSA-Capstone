@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
+import './index.css'; // Import the CSS file
 
 const API = "https://fsa-capstone.onrender.com/api";
 
@@ -65,18 +66,20 @@ const SingleProduct = () => {
   }
 
   return (
-    <div>
-      <h2>Product Details</h2>
-      <div>
+    <div className="single-product-container">
+      <h2 className="single-product-heading">Product Details</h2>
+      <div className="single-product-details">
         <img src={product.image_url} alt={product.name} />
-        <div>Name: {product.character_name}</div>
-        <div>Series: {product.series}</div>
-        <div>Price: {product.price}</div>
-        <div>Stock Quantity: {product.stock_quantity}</div>
-        <div>Category: {product.category}</div>
-        <div>Description: {product.description}</div>
-        <input type="number" value={quantity} onChange={(e) => handleQuantityChange(e.target.value)} />
-        <button onClick={handleAddToCart}>Add to Cart</button>
+        <div>
+          <div>Name: {product.character_name}</div>
+          <div>Series: {product.series}</div>
+          <div>Price: {product.price}</div>
+          <div>Stock Quantity: {product.stock_quantity}</div>
+          <div>Category: {product.category}</div>
+          <div>Description: {product.description}</div>
+          <input type="number" value={quantity} onChange={(e) => handleQuantityChange(e.target.value)} className="single-product-quantity" />
+          <button onClick={handleAddToCart} className="single-product-action">Add to Cart</button>
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import './index.css';
 
 const API = "https://fsa-capstone.onrender.com/api";
 
@@ -17,22 +18,9 @@ const PlaceOrder = ({ token }) => {
   useEffect(() => {
     fetchUserDetails();
     fetchCartItems();
-    clearCartItems();
 
   }, [token]);
 
-  const clearCartItems = async () => {
-    try {
-      await fetch(`${API}/cartitems`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: localStorage.getItem('token')
-        }
-      });
-    } catch (error) {
-      console.error('Error clearing cart items:', error);
-    }
-  };
 
   const fetchUserDetails = async () => {
     try {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import './index.css'; // Import the CSS file
 
 const API = "https://fsa-capstone.onrender.com/api";
 
@@ -71,32 +72,34 @@ const Cart = ({ token }) => {
   };
 
   return (
-    <div>
+    <div className="cart-container">
       <h2>Shopping Cart</h2>
       {products.length === 0 ? (
         <p>Your cart is empty</p>
       ) : (
         <div>
           {products.map(product => (
-            <div key={product.cart_id}>
+            <div key={product.cart_id} className="cart-item">
               <Link to={`/product/${product.product_id}`}>
-                <img src={product.image_url} alt={product.character_name} style={{ maxWidth: '100px', maxHeight: '100px' }} />
+                <img src={product.image_url} alt={product.character_name} className="cart-item-image" />
               </Link>
-              <div>
+              <div className="cart-item-details">
                 <p>Name: {product.character_name}</p>
                 <p>Quantity: {product.quantity}</p>
                 <p>Price: {product.price}</p>
-                <button onClick={() => removeFromCart(product.cart_id)}>Remove</button>
+                <div className="cart-item-remove">
+                  <button onClick={() => removeFromCart(product.cart_id)}>Remove</button>
+                </div>
               </div>
             </div>
           ))}
-          <p>Total: {calculateTotal()}</p>
+          <p className="cart-total">Total: ${calculateTotal()}</p>
           {isLoggedIn ? (
-            <Link to="/order">
+            <Link to="/order" className="cart-action">
               <button>Checkout</button>
             </Link>
           ) : (
-            <Link to="/register">
+            <Link to="/register" className="cart-action">
               <button>Register to Checkout</button>
             </Link>
           )}

@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './index.css'; // Import your CSS file
 
 const API = "https://fsa-capstone.onrender.com/api/auth";
 
@@ -9,6 +11,7 @@ const Login = () => {
   });
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const history = useNavigate();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -29,25 +32,23 @@ const Login = () => {
         throw new Error('Failed to log in');
       }
       const data = await response.json();
-    // Store the token in local storage
-    localStorage.setItem('token', data.token);
+      // Store the token in local storage
+      localStorage.setItem('token', data.token);
       console.log('Logged in successfully');
       setSuccessMessage('Logged in successfully');
-      window.location.href = '/products';
+      history("/products");
     } catch (error) {
       console.error('Failed to log in', error);
-      setErrorMessage('User doesnt exist');
+      setErrorMessage('User doesn\'t exist');
     }
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">Login</h2>
-      {/* Display success message if registration is successful */}
+    <div className="login-container">
+      <h2 className="login-heading">Login</h2>
       {successMessage && <p className="success">{successMessage}</p>}
-      {/* Display error message if there's an error */}
       {errorMessage && <p className="error">{errorMessage}</p>}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="login-form">
         <label htmlFor="email">
           Email:
           <input
@@ -72,7 +73,7 @@ const Login = () => {
             required
           />
         </label>
-        <button type="submit">Login</button>
+        <button type="submit" className="login-form-button">Login</button>
       </form>
     </div>
   );

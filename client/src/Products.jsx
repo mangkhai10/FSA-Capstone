@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import './index.css'; // Import the CSS file
 
 const API = "https://fsa-capstone.onrender.com/api";
 
@@ -9,8 +10,6 @@ const Products = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [quantityMap, setQuantityMap] = useState({});
-  
-
 
   const fetchProducts = async () => {
     try {
@@ -28,10 +27,10 @@ const Products = () => {
       console.error('Error fetching products:', error);
     }
   };
+
   useEffect(() => {
     fetchProducts();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[]);
+  }, []);
 
   const initializeQuantityMap = (products) => {
     const initialQuantityMap = {};
@@ -40,7 +39,7 @@ const Products = () => {
     });
     setQuantityMap(initialQuantityMap);
   };
-  
+
   const handleAddToCart = async (productId) => {
     try {
       const quantityToAdd = quantityMap[productId];
@@ -58,7 +57,7 @@ const Products = () => {
           price: price
         })
       });
-  
+
       if (response.ok) {
         const updatedProducts = products.map(prod => {
           if (prod.product_id === productId) {
@@ -75,7 +74,6 @@ const Products = () => {
       console.error('Error adding to cart:', error);
     }
   };
-  
 
   const handleSearch = (event) => {
     const query = event.target.value.toLowerCase();
@@ -98,38 +96,40 @@ const Products = () => {
     }
   };
 
-
   return (
-    <div>
-      <h1>Welcome to Anime Figure Store</h1>
-      <input
-        type="text"
-        placeholder="Search by name/category..."
-        value={searchQuery}
-        onChange={handleSearch}
-      />
-      <select value={selectedCategory} onChange={handleCategoryChange}>
-        <option value="">All Categories</option>
-        {Array.from(new Set(products.map(product => product.category))).map(category => (
-          <option key={category} value={category}>{category}</option>
-        ))}
-      </select>
-      <ul>
+    <div className="container">
+      <h1 className="heading">Welcome to Anime Figure Store</h1>
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Search by name/category..."
+          value={searchQuery}
+          onChange={handleSearch}
+          className="search-field"
+        />
+        <select value={selectedCategory} onChange={handleCategoryChange} className="search-field">
+          <option value="">All Categories</option>
+          {Array.from(new Set(products.map(product => product.category))).map(category => (
+            <option key={category} value={category}>{category}</option>
+          ))}
+        </select>
+      </div>
+      <ul className="products-container">
         {filteredProducts.map(product => (
-          <li key={product.product_id}>
+          <li key={product.product_id} className="product-card">
             <Link to={`/product/${product.product_id}`}>
-              <img src={product.image_url} alt={product.character_name} style={{ maxWidth: '100px', maxHeight: '100px' }} />
-            
-            {/* Display other product details */}
-            <div>Name: {product.character_name}</div>
+              <img src={product.image_url} alt={product.character_name} className="product-image" />
             </Link>
-            <div>Series: {product.series}</div>
-            <div>Price: {product.price}</div>
-            <div>Category: {product.category}</div>
-            <div>Description: {product.description}</div>
-            
-            {/* Quantity input and Add to Cart button */}
-            <button onClick={() => handleAddToCart(product.product_id)}>Add to Cart</button>
+            <div className="product-details">
+              <Link to={`/product/${product.product_id}`} className="product-name">{product.character_name}</Link>
+              <div className="product-author">Series: {product.series}</div>
+              <div className="product-price">Price: {product.price}</div>
+              <div className="product-category">Category: {product.category}</div>
+              <div className="product-description">Description: {product.description}</div>
+            </div>
+            <div className="product-actions">
+              <button onClick={() => handleAddToCart(product.product_id)} className="add-to-cart-button">Add to Cart</button>
+            </div>
           </li>
         ))}
       </ul>

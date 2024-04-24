@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import './index.css'; // Import your CSS file
 
 const API = "https://fsa-capstone.onrender.com/api";
 
@@ -37,16 +38,16 @@ const OrderConfirmation = ({ token }) => {
   };
   
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="order-confirmation-container">Loading...</div>; {/* Apply CSS class for order confirmation container */}
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className="order-confirmation-container">Error: {error}</div>; {/* Apply CSS class for order confirmation container */}
   }
 
   return (
-    <div>
-      <h2>Order Confirmation</h2>
+    <div className="order-confirmation-container"> {/* Apply CSS class for order confirmation container */}
+      <h2 className="order-confirmation-heading">Order Confirmation</h2> {/* Apply CSS class for order confirmation heading */}
       <div key={orderDetails.id}>
         <p>Order ID: {orderDetails.id}</p>
         <p>Total Amount: ${orderDetails.total_amount}</p>
