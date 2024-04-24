@@ -1,14 +1,14 @@
 import { useState} from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Navigation from './components/Navigation';
-import Register from './components/Register';
-import Products from './components/Products';
-import Login from './components/Login';
-import Account from './components/Account';
-import SingleProduct from './components/SingleProduct'; 
-import Cart from './components/Cart';
-import PlaceOrder from './components/PlaceOrder';
-import OrderConfirmation from './components/OrderConfirmation';
+import Navigation from './Navigation';
+import Register from './Register';
+import Products from './Products';
+import Login from './Login';
+import Account from './Account';
+import SingleProduct from './SingleProduct'; 
+import Cart from './Cart';
+import PlaceOrder from './PlaceOrder';
+import OrderConfirmation from './OrderConfirmation';
 
 
 function App() {
